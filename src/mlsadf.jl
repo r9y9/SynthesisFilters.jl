@@ -13,7 +13,7 @@ end
 
 delay(f::Filter) = f.delay
 alpha(f::MLSABaseFilter) = f.α
-    
+
 function filter!(bf::MLSABaseFilter, x::Float64, coef::Vector{Float64})
     d = delay(bf)
     d[1] = x
@@ -34,7 +34,7 @@ function filter!(bf::MLSABaseFilter, x::Float64, coef::Vector{Float64})
     for i=length(d):-1:3
         @inbounds d[i] = d[i-1] 
     end
-    
+
     result
 end
 
@@ -47,7 +47,7 @@ type MLSACascadeFilter <: Filter
 
     function MLSACascadeFilter(order::Int, α::Float64, pade::Int)
         padecoef = Array(Float64, pade+1)
-        
+
         if pade == 4
             padecoef = [1.0, 4.999273e-1, 1.067005e-1, 1.170221e-2, 5.656279e-4]
         elseif pade == 5
@@ -56,7 +56,7 @@ type MLSACascadeFilter <: Filter
         else
             error("MLSADF: Order of pade approximation 4 or 5 is only supported.")
         end
-        
+
         filters = Array(MLSABaseFilter, pade+1)
         for i=1:length(filters)
             filters[i] = MLSABaseFilter(order, α)
@@ -88,7 +88,7 @@ end
 
 type MLSADF <: MelGeneralizedSynthesisFilter
     filters::Vector{MLSACascadeFilter}
-    
+
     function MLSADF(order::Int, α::Float64; pade::Int=5)
         filters = Array(MLSACascadeFilter, 2)
         filters[1] = MLSACascadeFilter(2, α, pade)
