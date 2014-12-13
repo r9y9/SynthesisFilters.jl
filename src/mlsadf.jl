@@ -66,6 +66,8 @@ type MLSACascadeFilter <: Filter
     end
 end
 
+alpha(f::MLSACascadeFilter) = alpha(f.filters[1])
+
 function filter!(cf::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
     d = delay(cf)
     result, feedback = 0.0, 0.0
@@ -97,9 +99,15 @@ type MLSADF <: MelGeneralizedSynthesisFilter
     end
 end
 
+alpha(f::MLSADF) = alpha(f.filters[1])
 first(f::MLSADF) = f.filters[1]
 last(f::MLSADF) = f.filters[2]
 
 function filter!(f::MLSADF, x::Float64, coef::Vector{Float64})
     filter!(last(f), filter!(first(f), x, [0.0, coef[2]]), coef)
+end
+
+function filtercoef_from_mgc(f::MLSADF, mc::Vector{Float64})
+    α= alpha(f)
+    mc2b(mc, α)
 end

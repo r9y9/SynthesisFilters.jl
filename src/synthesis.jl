@@ -3,11 +3,9 @@
 function synthesis_one_frame!(f::MelGeneralizedSynthesisFilter,
                               excite::Vector{Float64},
                               previous_mgc::Vector{Float64},
-                              current_mgc::Vector{Float64},
-                              α::Float64,
-                              γ::Float64)
-    previous_coef = mgc2b(previous_mgc, α, γ)
-    current_coef = mgc2b(current_mgc, α, γ)
+                              current_mgc::Vector{Float64})
+    previous_coef = filtercoef_from_mgc(f, previous_mgc)
+    current_coef = filtercoef_from_mgc(f, current_mgc)
 
     slope = (current_coef - previous_coef) / float(length(excite))
 
@@ -16,26 +14,19 @@ function synthesis_one_frame!(f::MelGeneralizedSynthesisFilter,
 
     for i=1:endof(excite)
         scaled_excitation = excite[i] * exp(interpolated_coef[1])
-        part_of_speech[i] = filter!(f, scaled_excitation,
-                                    interpolated_coef, α)
+        part_of_speech[i] = filter!(f, scaled_excitation, interpolated_coef)
         interpolated_coef += slope
     end
 
     part_of_speech
 end
 
-# Special case
-synthesis_one_frame!(f::MLSADF, excite, previous_mgc, current_mgc, α) =
-    synthesis_one_frame!(f, excite, previous_mgc, current_mgc, α, 0.0)
-
 # synthesis! generates a speech waveform given a excitation signal and
 # a sequence of mel generalized cepstrum.
 function synthesis!(f::MelGeneralizedSynthesisFilter,
                     excite::Vector{Float64},
                     mgc_sequence::Matrix{Float64},
-                    α::Float64,
-                    hopsize::Int,
-                    γ::Float64)
+                    hopsize::Int)
     const T = length(excite)
     synthesized = zeros(T)
 
@@ -53,13 +44,9 @@ function synthesis!(f::MelGeneralizedSynthesisFilter,
 
         part_of_speech = synthesis_one_frame!(f, excite[s:e],
                                               previous_mgc,
-                                              current_mgc, α, γ)
+                                              current_mgc)
         synthesized[s:e] = part_of_speech
     end
 
     synthesized
 end
-
-# Special case
-synthesis!(f::MLSADF, excite, mgc_sequence, α, hopsize) =
-    synthesis!(f, excite, mgc_sequence, α, hopsize, 0.0)

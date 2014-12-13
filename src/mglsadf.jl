@@ -48,6 +48,7 @@ type MGLSADF <: MelGeneralizedSynthesisFilter
     end
 end
 
+alpha(f::MGLSADF) = alpha(f.filters[1])
 gamma(f::MGLSADF) = -1.0/length(filters)
 
 function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})
@@ -56,4 +57,22 @@ function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})
         y = filter!(f.filters[i], y, coef)
     end
     y
+end
+
+function filtercoef_from_mgc(f::MGLSADF, mgc::Vector{Float64})
+    α= alpha(f)
+    γ = gamma(f)
+    b = mc2b(mc, α)
+
+    if γ == 0.0
+        return b
+    end
+
+    b = gnorm(b, γ)
+
+    # scale by gamma
+    b[1] = log(b[1])
+    b[2:end] *= γ
+
+    b
 end
