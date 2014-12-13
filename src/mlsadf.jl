@@ -16,12 +16,14 @@ alpha(f::MLSABaseFilter) = f.α
 
 function filter!(bf::MLSABaseFilter, x::Float64, coef::Vector{Float64})
     d = delay(bf)
+    α = alpha(f)
+
     d[1] = x
-    d[2] = (1.0-bf.α*bf.α)*d[1] + bf.α*d[2]
+    d[2] = (1.0-α*α)*d[1] + α*d[2]
 
     result = 0.0
     for i=3:length(coef)
-        @inbounds d[i] = d[i] + bf.α*(d[i+1] - d[i-1])
+        @inbounds d[i] = d[i] + α*(d[i+1] - d[i-1])
         @inbounds result += d[i] * coef[i]
     end
 

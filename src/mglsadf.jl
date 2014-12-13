@@ -61,7 +61,7 @@ function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})
 end
 
 function filtercoef_from_mgc(f::MGLSADF, mgc::Vector{Float64})
-    α= alpha(f)
+    α = alpha(f)
     γ = gamma(f)
     b = mc2b(mc, α)
 
