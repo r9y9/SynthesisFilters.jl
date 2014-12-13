@@ -4,7 +4,7 @@ export
   SynthesisFilter,
   MelGeneralizedSynthesisFilter, # MLSADF or MGLSADF
   MLSADF,               # Mel-Log Spectrum Approximation Digital Filter
-  MGLSADF,
+  MGLSADF,              # Mel Generalized-Log Spectrum Approximation Digital Filter
   synthesis_one_frame!, #
   synthesis!,           #
   filter!               # filtering one sample (low-level)

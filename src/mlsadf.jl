@@ -103,7 +103,3 @@ last(f::MLSADF) = f.filters[2]
 function filter!(f::MLSADF, x::Float64, coef::Vector{Float64})
     filter!(last(f), filter!(first(f), x, [0.0, coef[2]]), coef)
 end
-
-function filter!(m::MLSADF, x::Real, b::Vector{Float64}, α::Float64)
-    filter!(m, x, b)
-end
