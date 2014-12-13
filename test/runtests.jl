@@ -10,6 +10,7 @@ function test_mlsadf(α::Float64=0.41, pade::Int=5)
     order = length(mc)-1
 
     f = MLSADF(order, α, pade=pade)
+    @test alpha(f) == α
 
     # setup for SPTK mlsadf
     delay = SPTK.mlsadf_delay(order, pade)
@@ -22,19 +23,22 @@ function test_mlsadf(α::Float64=0.41, pade::Int=5)
     end
 end
 
-function test_mglsadf(α::Float64=0.41, nstage::Int=10)
+function test_mglsadf(α::Float64=0.41, ns::Int=10)
     srand(98765)
     x = rand(100)
     mc = rand(21)
     order = length(mc)-1
 
-    f = MGLSADF(order, α, nstage)
+    f = MGLSADF(order, α, ns)
+    @test alpha(f) == α
+    @test nstage(f) == ns
+    @test gamma(f) == -1.0/ns
 
     # setup for SPTK mlsadf
-    delay = SPTK.mglsadf_delay(order, nstage)
+    delay = SPTK.mglsadf_delay(order, ns)
 
     for i=1:length(x)
-        y = SPTK.mglsadf(x[i], mc, α, nstage, delay)
+        y = SPTK.mglsadf(x[i], mc, α, ns, delay)
         ŷ = filter!(f, x[i], mc)
         @test !isnan(ŷ)
         @test_approx_eq y ŷ
@@ -69,14 +73,14 @@ for α in [0.35, 0.41, 0.544]
 end
 
 for α in [0.35, 0.41, 0.544]
-    for nstage in 1:15
-        println("mglsadf: testing with α=$α, nstage=$nstage, γ=$(-1.0/nstage)")
-        test_mglsadf(α, nstage)
+    for ns in 1:15
+        println("mglsadf: testing with α=$α, nstage=$ns, γ=$(-1.0/ns)")
+        test_mglsadf(α, ns)
     end
 end
 
-for nstage in 1:15
-    γ=-1.0/nstage
+for ns in 1:15
+    γ=-1.0/ns
     println("gnorm: testing with γ=$γ")
     test_gnorm(γ)
 end

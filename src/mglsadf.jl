@@ -49,8 +49,8 @@ type MGLSADF <: MelGeneralizedSynthesisFilter
 end
 
 alpha(f::MGLSADF) = alpha(f.filters[1])
-gamma(f::MGLSADF) = -1.0/length(filters)
-nstage(f::MGLSADF) = length(filters)
+gamma(f::MGLSADF) = -1.0/length(f.filters)
+nstage(f::MGLSADF) = length(f.filters)
 
 function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})
     y = x
