@@ -1,11 +1,22 @@
+function mgc2b(f::MLSADF, mc::Vector{Float64})
+    α = alpha(f)
+    mc2b(mc, α)
+end
+
+function mgc2b(f::MGLSADF, mgc::Vector{Float64})
+    α = alpha(f)
+    γ = gamma(f)
+    mgc2b(mc, α, γ)
+end
+
 # synthesis_one_frame! generates speech waveform for one frame speech signal
 # given a excitation signal and successive two mel generalized cepstrum.
 function synthesis_one_frame!(f::MelGeneralizedSynthesisFilter,
                               excite::Vector{Float64},
                               previous_mgc::Vector{Float64},
                               current_mgc::Vector{Float64})
-    previous_coef = filtercoef_from_mgc(f, previous_mgc)
-    current_coef = filtercoef_from_mgc(f, current_mgc)
+    previous_coef = mgc2b(f, previous_mgc)
+    current_coef = mgc2b(f, current_mgc)
 
     slope = (current_coef - previous_coef) / float(length(excite))
 

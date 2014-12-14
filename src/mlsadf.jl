@@ -111,8 +111,3 @@ gamma(f::MLSADF) = 0.0
 function filter!(f::MLSADF, x::Float64, coef::Vector{Float64})
     filter!(last(f), filter!(first(f), x, [0.0, coef[2]]), coef)
 end
-
-function filtercoef_from_mgc(f::MLSADF, mc::Vector{Float64})
-    α= alpha(f)
-    mc2b(mc, α)
-end

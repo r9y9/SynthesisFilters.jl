@@ -1,5 +1,7 @@
 module SynthesisFilters
 
+import MelGeneralizedCepstrums: mc2b, mgc2b
+
 export
   SynthesisFilter,
   MelGeneralizedSynthesisFilter, # MLSADF or MGLSADF
@@ -10,23 +12,14 @@ export
   nstage,
   synthesis_one_frame!, #
   synthesis!,           #
-  filter!,              # filtering one sample (low-level)
+  filter!               # filtering one sample (low-level)
 
-  # Conversions (should be moved to other package?)
-  gnorm,
-  mc2b
-
+# TODO: improve type design
 abstract Filter
 abstract SynthesisFilter <: Filter
 abstract MelGeneralizedSynthesisFilter <: SynthesisFilter
 
-function filtercoef_from_mgc(f::SynthesisFilter, mgc::Vector{Float64})
-    error("not implemented")
-end
-
 for fname in [
-              "gnorm",
-              "mc2b",
               "mlsadf",
               "mglsadf",
               "synthesis",

@@ -59,21 +59,3 @@ function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})
     end
     y
 end
-
-function filtercoef_from_mgc(f::MGLSADF, mgc::Vector{Float64})
-    α = alpha(f)
-    γ = gamma(f)
-    b = mc2b(mc, α)
-
-    if γ == 0.0
-        return b
-    end
-
-    b = gnorm(b, γ)
-
-    # scale by gamma
-    b[1] = log(b[1])
-    b[2:end] *= γ
-
-    b
-end

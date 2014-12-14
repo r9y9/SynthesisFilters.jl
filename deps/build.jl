@@ -12,5 +12,8 @@ function install_non_official_pkg(path; build::Bool=false)
     end
 end
 
+install_non_official_pkg("https://github.com/r9y9/MelGeneralizedCepstrum.jl",
+                         build=true)
+
 # Just for testing
 install_non_official_pkg("https://github.com/r9y9/SPTK.jl", build=true)
