@@ -24,8 +24,9 @@ function synthesis_one_frame!(f::MelGeneralizedCepstrumSynthesisFilter,
     interpolated_coef = copy(previous_coef)
 
     for i=1:endof(excite)
-        scaled_excitation = excite[i] * exp(interpolated_coef[1])
-        part_of_speech[i] = filter!(f, scaled_excitation, interpolated_coef)
+        @inbounds scaled_excitation = excite[i] * exp(interpolated_coef[1])
+        @inbounds part_of_speech[i] = filter!(f, scaled_excitation,
+                                              interpolated_coef)
         interpolated_coef += slope
     end
 
@@ -44,19 +45,21 @@ function synthesis!(f::MelGeneralizedCepstrumSynthesisFilter,
     previous_mgc = mgc_sequence[:,1]
     for i=1:size(mgc_sequence, 2)
         if i > 1
-            previous_mgc = mgc_sequence[:,i-1]
+            @inbounds previous_mgc = mgc_sequence[:,i-1]
         end
-        current_mgc = mgc_sequence[:,i]
+        @inbounds current_mgc = mgc_sequence[:,i]
 
         const s, e = (i-1)*hopsize+1, i*hopsize
         if e > T
             break
         end
 
-        part_of_speech = synthesis_one_frame!(f, excite[s:e],
-                                              previous_mgc,
-                                              current_mgc)
-        synthesized[s:e] = part_of_speech
+        @inbounds begin
+            part_of_speech = synthesis_one_frame!(f, excite[s:e],
+                                                  previous_mgc,
+                                                  current_mgc)
+        end
+        @inbounds synthesized[s:e] = part_of_speech
     end
 
     synthesized
