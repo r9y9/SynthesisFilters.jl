@@ -3,6 +3,7 @@ using Base.Test
 
 import SPTK
 
+
 function test_mlsadf(α::Float64=0.41, pade::Int=5)
     srand(98765)
     x = rand(100)
@@ -11,6 +12,7 @@ function test_mlsadf(α::Float64=0.41, pade::Int=5)
 
     f = MLSADF(order, α, pade=pade)
     @test alpha(f) == α
+    @test gamma(f) == 0.0
 
     # setup for SPTK mlsadf
     delay = SPTK.mlsadf_delay(order, pade)
