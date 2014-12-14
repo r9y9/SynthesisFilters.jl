@@ -4,7 +4,7 @@ import MelGeneralizedCepstrums: mc2b, mgc2b
 
 export
   SynthesisFilter,
-  MelGeneralizedSynthesisFilter, # MLSADF or MGLSADF
+  MelGeneralizedCepstrumSynthesisFilter, # MLSADF or MGLSADF
   MLSADF,               # Mel-Log Spectrum Approximation Digital Filter
   MGLSADF,              # Mel Generalized-Log Spectrum Approximation Digital Filter
   alpha,
@@ -14,10 +14,9 @@ export
   synthesis!,           #
   filter!               # filtering one sample (low-level)
 
-# TODO: improve type design
 abstract Filter
 abstract SynthesisFilter <: Filter
-abstract MelGeneralizedSynthesisFilter <: SynthesisFilter
+abstract MelGeneralizedCepstrumSynthesisFilter <: SynthesisFilter
 
 for fname in [
               "mlsadf",

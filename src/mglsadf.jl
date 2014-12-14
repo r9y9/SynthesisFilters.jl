@@ -36,7 +36,7 @@ end
 
 # MGLSAFilter represents a Mel Generalized Log Spectrum Approximation Digital
 # Filter.
-type MGLSADF <: MelGeneralizedSynthesisFilter
+type MGLSADF <: MelGeneralizedCepstrumSynthesisFilter
     filters::Vector{MGLSABaseFilter}
 
     function MGLSADF(order::Int, α::Float64, nstage::Int)

@@ -92,7 +92,7 @@ function filter!(f::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
     result
 end
 
-type MLSADF <: MelGeneralizedSynthesisFilter
+type MLSADF <: MelGeneralizedCepstrumSynthesisFilter
     filters::Vector{MLSACascadeFilter}
 
     function MLSADF(order::Int, α::Float64; pade::Int=5)

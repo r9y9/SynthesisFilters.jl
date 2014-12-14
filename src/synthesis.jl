@@ -11,7 +11,7 @@ end
 
 # synthesis_one_frame! generates speech waveform for one frame speech signal
 # given a excitation signal and successive two mel generalized cepstrum.
-function synthesis_one_frame!(f::MelGeneralizedSynthesisFilter,
+function synthesis_one_frame!(f::MelGeneralizedCepstrumSynthesisFilter,
                               excite::Vector{Float64},
                               previous_mgc::Vector{Float64},
                               current_mgc::Vector{Float64})
@@ -34,7 +34,7 @@ end
 
 # synthesis! generates a speech waveform given a excitation signal and
 # a sequence of mel generalized cepstrum.
-function synthesis!(f::MelGeneralizedSynthesisFilter,
+function synthesis!(f::MelGeneralizedCepstrumSynthesisFilter,
                     excite::Vector{Float64},
                     mgc_sequence::Matrix{Float64},
                     hopsize::Int)
