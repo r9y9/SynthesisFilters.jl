@@ -3,7 +3,6 @@ using Base.Test
 
 import SPTK
 
-
 function test_mlsadf(α::Float64, pade::Int)
     srand(98765)
     x = rand(100)
