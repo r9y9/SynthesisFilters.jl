@@ -6,7 +6,7 @@ end
 function mgc2b(f::MGLSADF, mgc::Vector{Float64})
     α = alpha(f)
     γ = gamma(f)
-    mgc2b(mc, α, γ)
+    mgc2b(mgc, α, γ)
 end
 
 # synthesis_one_frame! generates speech waveform for one frame speech signal
