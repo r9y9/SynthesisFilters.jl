@@ -14,8 +14,8 @@ end
 delay(f::Filter) = f.delay
 alpha(f::MLSABaseFilter) = f.α
 
-function filter!(bf::MLSABaseFilter, x::Float64, coef::Vector{Float64})
-    d = delay(bf)
+function filter!(f::MLSABaseFilter, x::Float64, coef::Vector{Float64})
+    d = delay(f)
     α = alpha(f)
 
     d[1] = x
@@ -69,14 +69,16 @@ type MLSACascadeFilter <: Filter
 end
 
 alpha(f::MLSACascadeFilter) = alpha(f.filters[1])
+padecoef(f::MLSACascadeFilter) = f.padecoef
 
-function filter!(cf::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
-    d = delay(cf)
+function filter!(f::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
+    d = delay(f)
+    pade = padecoef(f)
     result, feedback = 0.0, 0.0
 
-    for i=length(cf.padecoef):-1:2
-        @inbounds d[i] = filter!(cf.filters[i], d[i-1], coef)
-        @inbounds val = d[i] * cf.padecoef[i]
+    for i=length(pade):-1:2
+        @inbounds d[i] = filter!(f.filters[i], d[i-1], coef)
+        @inbounds val = d[i] * pade[i]
         if iseven(i)
             feedback += val
         else
@@ -101,9 +103,10 @@ type MLSADF <: MelGeneralizedSynthesisFilter
     end
 end
 
-alpha(f::MLSADF) = alpha(f.filters[1])
 first(f::MLSADF) = f.filters[1]
 last(f::MLSADF) = f.filters[2]
+alpha(f::MLSADF) = alpha(first(f))
+gamma(f::MLSADF) = 0.0
 
 function filter!(f::MLSADF, x::Float64, coef::Vector{Float64})
     filter!(last(f), filter!(first(f), x, [0.0, coef[2]]), coef)
