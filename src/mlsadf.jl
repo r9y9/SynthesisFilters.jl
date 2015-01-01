@@ -5,18 +5,18 @@ type MLSABaseFilter <: Filter
     order::Int
     α::Float64
     delay::Vector{Float64}
-    
+
     function MLSABaseFilter(order::Int, α::Float64)
         new(order, α, zeros(order+1))
     end
 end
 
 delay(f::Filter) = f.delay
-alpha(f::MLSABaseFilter) = f.α
+allpass_alpha(f::MLSABaseFilter) = f.α
 
 function filter!(f::MLSABaseFilter, x::Float64, coef::Vector{Float64})
     d = delay(f)
-    α = alpha(f)
+    α = allpass_alpha(f)
 
     d[1] = x
     d[2] = (1.0-α*α)*d[1] + α*d[2]
@@ -34,13 +34,13 @@ function filter!(f::MLSABaseFilter, x::Float64, coef::Vector{Float64})
 
     # t <- t+1 in time
     for i=length(d):-1:3
-        @inbounds d[i] = d[i-1] 
+        @inbounds d[i] = d[i-1]
     end
 
     result
 end
 
-# MLSACascadeFilter represents a cascade filter which contains MLSA base 
+# MLSACascadeFilter represents a cascade filter which contains MLSA base
 # filters.
 type MLSACascadeFilter <: Filter
     filters::Vector{MLSABaseFilter}
@@ -68,7 +68,7 @@ type MLSACascadeFilter <: Filter
     end
 end
 
-alpha(f::MLSACascadeFilter) = alpha(f.filters[1])
+allpass_alpha(f::MLSACascadeFilter) = allpass_alpha(f.filters[1])
 padecoef(f::MLSACascadeFilter) = f.padecoef
 
 function filter!(f::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
@@ -105,8 +105,8 @@ end
 
 first(f::MLSADF) = f.filters[1]
 last(f::MLSADF) = f.filters[2]
-alpha(f::MLSADF) = alpha(first(f))
-gamma(f::MLSADF) = 0.0
+allpass_alpha(f::MLSADF) = allpass_alpha(first(f))
+glog_gamma(f::MLSADF) = 0.0
 
 function filter!(f::MLSADF, x::Float64, coef::Vector{Float64})
     filter!(last(f), filter!(first(f), x, [0.0, coef[2]]), coef)

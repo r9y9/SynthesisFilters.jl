@@ -11,12 +11,12 @@ type MGLSABaseFilter <: Filter
     end
 end
 
-alpha(f::MGLSABaseFilter) = f.α
+allpass_alpha(f::MGLSABaseFilter) = f.α
 
 function filter!(bf::MGLSABaseFilter, x::Float64, coef::Vector{Float64})
     d = delay(bf)
     y = d[1] * coef[2]
-    α = alpha(bf)
+    α = allpass_alpha(bf)
 
     for i=2:length(coef)-1
         @inbounds d[i] += α*(d[i+1] - d[i-1])
@@ -48,8 +48,8 @@ type MGLSADF <: MelGeneralizedCepstrumSynthesisFilter
     end
 end
 
-alpha(f::MGLSADF) = alpha(f.filters[1])
-gamma(f::MGLSADF) = -1.0/length(f.filters)
+allpass_alpha(f::MGLSADF) = allpass_alpha(f.filters[1])
+glog_gamma(f::MGLSADF) = -1.0/length(f.filters)
 nstage(f::MGLSADF) = length(f.filters)
 
 function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})

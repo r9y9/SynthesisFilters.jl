@@ -7,8 +7,8 @@ export
   MelGeneralizedCepstrumSynthesisFilter, # MLSADF or MGLSADF
   MLSADF,               # Mel-Log Spectrum Approximation Digital Filter
   MGLSADF,              # Mel Generalized-Log Spectrum Approximation Digital Filter
-  alpha,
-  gamma,
+  allpass_alpha,        # all-pass constant (alpha)
+  glog_gamma,           # parameter of generalized log function
   nstage,
   synthesis_one_frame!, #
   synthesis!,           #
@@ -17,6 +17,9 @@ export
 abstract Filter
 abstract SynthesisFilter <: Filter
 abstract MelGeneralizedCepstrumSynthesisFilter <: SynthesisFilter
+
+allpass_alpha(f::MelGeneralizedCepstrumSynthesisFilter) = error("not implemented")
+glog_gamma(f::MelGeneralizedCepstrumSynthesisFilter) = error("not implemented")
 
 for fname in [
               "mlsadf",

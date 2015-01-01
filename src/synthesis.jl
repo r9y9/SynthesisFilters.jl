@@ -1,11 +1,11 @@
 function mgc2b(f::MLSADF, mc::Vector{Float64})
-    α = alpha(f)
+    α = allpass_alpha(f)
     mc2b(mc, α)
 end
 
 function mgc2b(f::MGLSADF, mgc::Vector{Float64})
-    α = alpha(f)
-    γ = gamma(f)
+    α = allpass_alpha(f)
+    γ = glog_gamma(f)
     mgc2b(mgc, α, γ)
 end
 
