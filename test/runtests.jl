@@ -3,6 +3,25 @@ using Base.Test
 
 import SPTK
 
+function test_lmadf(pade::Int)
+    srand(98765)
+    x = rand(100)
+    c = rand(21)
+    order = length(c)-1
+
+    f = LMADF(order, pade=pade)
+
+    # setup for SPTK mlsadf
+    delay = SPTK.lmadf_delay(order, pade)
+
+    for i=1:length(x)
+        y = SPTK.lmadf(x[i], c, pade, delay)
+        ŷ = filter!(f, x[i], c)
+        @test !isnan(ŷ)
+        @test_approx_eq y ŷ
+    end
+end
+
 function test_mlsadf(α::Float64, pade::Int)
     srand(98765)
     x = rand(100)
@@ -46,6 +65,26 @@ function test_mglsadf(α::Float64=0.41, ns::Int=10)
     end
 end
 
+function test_lmadf_synthesis_one_frame(order::Int, pade::Int)
+    excite = rand(1024)
+    previous_mgc = rand(order+1)
+    current_mgc = rand(order+1)
+
+    f = LMADF(order; pade=pade)
+    r = synthesis_one_frame!(f, excite, previous_mgc, current_mgc)
+    @test any(!isnan(r))
+end
+
+function test_lmadf_synthesis(order::Int, pade::Int, hopsize::Int)
+    T = 1024
+    excite = rand(T)
+    mgc = rand(order+1, div(T, hopsize))
+
+    f = LMADF(order; pade=pade)
+    r = synthesis!(f, excite, mgc, hopsize)
+    @test any(!isnan(r))
+end
+
 function test_mlsadf_synthesis_one_frame(order::Int, α::Float64, pade::Int)
     excite = rand(1024)
     previous_mgc = rand(order+1)
@@ -86,6 +125,11 @@ function test_mglsadf_synthesis(order::Int, α::Float64, ns::Int, hopsize::Int)
     @test any(!isnan(r))
 end
 
+for pade in [4, 5]
+    println("lmadf: testing with pade=$pade")
+    test_lmadf(pade)
+end
+
 for α in [0.35, 0.41, 0.544]
     for pade in [4, 5]
         println("mlsadf: testing with α=$α, pade=$pade")
@@ -97,6 +141,24 @@ for α in [0.35, 0.41, 0.544]
     for ns in 1:15
         println("mglsadf: testing with α=$α, nstage=$ns, γ=$(-1.0/ns)")
         test_mglsadf(α, ns)
+    end
+end
+
+## Synthesis with LMADF
+
+for order in 20:5:40
+    for pade in [4, 5]
+        println("lamdf_synthesis_one_frame: testing with order=$order, pade=$pade")
+        test_lmadf_synthesis_one_frame(order, pade)
+    end
+end
+
+for order in 20:5:40
+    for pade in [4, 5]
+        for hopsize in [80, 160]
+            println("lmadf_synthesis: testing with order=$order, pade=$pade, hopsize=$hopsize")
+            test_lmadf_synthesis(order, pade, hopsize)
+        end
     end
 end
 

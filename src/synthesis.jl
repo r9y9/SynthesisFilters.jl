@@ -1,3 +1,7 @@
+## Mel-generalized cepstrum to filter coefficients
+
+mgc2b(f::LMADF, mgc::Vector{Float64}) = mgc
+
 function mgc2b(f::MLSADF, mc::Vector{Float64})
     α = allpass_alpha(f)
     mc2b(mc, α)
