@@ -6,6 +6,7 @@ SynthesisFilters.jl provides waveform generation filters for speech synthesis, e
 
 ## Features
 
+- All Pole Digital Filter (AllPoleDF)
 - Log Magnitude Approximation Digital Filter (LMADF)
 - Mel-Log Spectrum Approximation Digital Filter (MLSADF)
 - Mel Generalized-Log Spectrum Approximation Digital Filter (MGLSADF)

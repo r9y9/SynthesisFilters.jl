@@ -3,6 +3,24 @@ using Base.Test
 
 import SPTK
 
+function test_poledf()
+    srand(98765)
+    x = rand(100)
+    c = rand(21)
+    order = length(c)-1
+
+    f = PoleDF(order)
+
+    delay = SPTK.poledf_delay(order)
+
+    for i=1:length(x)
+        y = SPTK.poledf(x[i], c, delay)
+        ŷ = filter!(f, x[i], c)
+        @test !isnan(ŷ)
+        @test_approx_eq y ŷ
+    end
+end
+
 function test_lmadf(pade::Int)
     srand(98765)
     x = rand(100)
@@ -124,6 +142,9 @@ function test_mglsadf_synthesis(order::Int, α::Float64, ns::Int, hopsize::Int)
     r = synthesis!(f, excite, mgc, hopsize)
     @test any(!isnan(r))
 end
+
+println("poledf: testing")
+test_poledf()
 
 for pade in [4, 5]
     println("lmadf: testing with pade=$pade")
