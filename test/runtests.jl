@@ -9,7 +9,7 @@ function test_poledf()
     c = rand(21)
     order = length(c)-1
 
-    f = PoleDF(order)
+    f = AllPoleDF(order)
 
     delay = SPTK.poledf_delay(order)
 
