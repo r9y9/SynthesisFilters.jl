@@ -6,6 +6,7 @@ export
   MelGeneralizedCepstrumSynthesisFilter, # LMADF or MLSADF or MGLSADF
 
   # Speech waveform sysnthesis filters
+  AllPoleDF,            # All Pole Digital filter
   LMADF,                # Log Magnitude Approximation Digital Filter
   MLSADF,               # Mel-Log Spectrum Approximation Digital Filter
   MGLSADF,              # Mel Generalized-Log Spectrum Approximation Digital Filter
@@ -24,6 +25,7 @@ export
 
 for fname in [
               "common",
+              "poledf",
               "lmadf",
               "mlsadf",
               "mglsadf",
