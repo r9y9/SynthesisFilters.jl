@@ -13,6 +13,12 @@ function mgc2b(f::MGLSADF, mgc::Vector{Float64})
     mgc2b(mgc, α, γ)
 end
 
+# get unexpected reulst if mgc has already log-gain, so it's need to be improved
+function mgc2b(f::AllPoleDF, mgc::Vector{Float64})
+    mgc[1] = log(mgc[1])
+    mgc
+end
+
 # synthesis_one_frame! generates speech waveform for one frame speech signal
 # given a excitation signal and successive two mel generalized cepstrum.
 function synthesis_one_frame!(f::MelGeneralizedCepstrumSynthesisFilter,
