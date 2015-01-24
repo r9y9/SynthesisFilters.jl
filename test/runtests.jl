@@ -124,14 +124,6 @@ function test_poledf_exception()
     end
     l = MelLinearPredictionCoef(0.41, c, false)
     @test_throws ArgumentError synthesis!(f, excite, l, hopsize)
-
-    #=
-    try
-        f(l)
-    catch
-        @test true
-    end
-    =#
 end
 
 function test_lmadf_synthesis_one_frame(order::Int, pade::Int)
