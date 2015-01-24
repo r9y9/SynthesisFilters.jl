@@ -1,12 +1,20 @@
-# compare vocoders
+# let's compare vocoders that are implemented in SynthesisFilters.jl
+#
+# After you've run the script, you'll get the following synthesized wav files:
+# 1. test16k_poledf.wav
+# 2. test16k_lmadf.wav
+# 3. test16k_mlsadf.wav
+# 4. test16k_mglsadf.wav
+#
+# The original wav file is found in data/test16k.wav.
+#
+# For more high quality speech waveform syntheis, you can check the `WORLD.jl`
+# https://github.com/r9y9/WORLD.jl
 
 using MelGeneralizedCepstrums
 using SynthesisFilters
 using WAV
 using DSP
-
-# TODO remove this
-import MelGeneralizedCepstrums: rawdata
 
 # Note about excitation
 # fs: 16000
