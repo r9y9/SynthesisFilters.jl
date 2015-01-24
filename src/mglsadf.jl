@@ -59,3 +59,9 @@ function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})
     end
     y
 end
+
+function to_filtcoef(f::MGLSADF, mgc::MelGeneralizedCepstrum)
+    @assert MelGeneralizedCepstrums.allpass_alpha(mgc) == allpass_alpha(f)
+    @assert MelGeneralizedCepstrums.glog_gamma(mgc) == glog_gamma(f)
+    rawdata(mgc2b(mgc))
+end
