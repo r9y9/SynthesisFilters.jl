@@ -1,3 +1,4 @@
+using MelGeneralizedCepstrums
 using SynthesisFilters
 using Base.Test
 
@@ -83,65 +84,180 @@ function test_mglsadf(α::Float64=0.41, ns::Int=10)
     end
 end
 
-function test_lmadf_synthesis_one_frame(order::Int, pade::Int)
+function test_poledf_synthesis_one_frame(order::Int)
+    srand(98765)
     excite = rand(1024)
-    previous_mgc = rand(order+1)
-    current_mgc = rand(order+1)
+    previous_b = rand(order+1)
+    current_b = rand(order+1)
+
+    f = AllPoleDF(order)
+    r = synthesis_one_frame!(f, excite, previous_b, current_b)
+    @test any(!isnan(r))
+end
+
+function test_poledf_synthesis(order::Int, hopsize::Int)
+    srand(98765)
+    T = 1024
+    excite = rand(T)
+    c = rand(order+1, div(T, hopsize))
+    l = MelLinearPredictionCoef(0.0, c, false)
+
+    f = AllPoleDF(order)
+    r = synthesis!(f, excite, l, hopsize)
+    @test any(!isnan(r))
+end
+
+function test_poledf_exception()
+    srand(98765)
+    T = 1024
+    order = 25
+    hopsize = 80
+    excite = rand(T)
+    c = rand(order+1, div(T, hopsize))
+
+    l = MelLinearPredictionCoef(0.0, c, false)
+    f = AllPoleDF(order)
+    try
+        synthesis!(f, excite, l, hopsize)
+    catch
+        @test false
+    end
+    l = MelLinearPredictionCoef(0.41, c, false)
+    @test_throws ArgumentError synthesis!(f, excite, l, hopsize)
+
+    #=
+    try
+        f(l)
+    catch
+        @test true
+    end
+    =#
+end
+
+function test_lmadf_synthesis_one_frame(order::Int, pade::Int)
+    srand(98765)
+    excite = rand(1024)
+    previous_b = rand(order+1)
+    current_b = rand(order+1)
 
     f = LMADF(order; pade=pade)
-    r = synthesis_one_frame!(f, excite, previous_mgc, current_mgc)
+    r = synthesis_one_frame!(f, excite, previous_b, current_b)
     @test any(!isnan(r))
 end
 
 function test_lmadf_synthesis(order::Int, pade::Int, hopsize::Int)
+    srand(98765)
     T = 1024
     excite = rand(T)
-    mgc = rand(order+1, div(T, hopsize))
+    c = rand(order+1, div(T, hopsize))
+    mgc = MelGeneralizedCepstrum(0.0, 0.0, c)
 
     f = LMADF(order; pade=pade)
     r = synthesis!(f, excite, mgc, hopsize)
     @test any(!isnan(r))
 end
 
+function test_lmadf_exception()
+    srand(98765)
+    T = 1024
+    order = 25
+    hopsize = 80
+    excite = rand(T)
+    c = rand(order+1, div(T, hopsize))
+
+    mgc = MelGeneralizedCepstrum(0.0, 0.0, c)
+    f = LMADF(order)
+    try
+        synthesis!(f, excite, mgc, hopsize)
+    catch
+        @test false
+    end
+    mgc = MelGeneralizedCepstrum(0.41, 0.0, c)
+    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+    mgc = MelGeneralizedCepstrum(0.41, -0.01, c)
+    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+    mgc = MelGeneralizedCepstrum(0.0, -0.01, c)
+    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+    mgc = MelGeneralizedCepstrum(0.0, -1.0, c)
+    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+end
+
 function test_mlsadf_synthesis_one_frame(order::Int, α::Float64, pade::Int)
+    srand(98765)
     excite = rand(1024)
-    previous_mgc = rand(order+1)
-    current_mgc = rand(order+1)
+    previous_b = rand(order+1)
+    current_b = rand(order+1)
 
     f = MLSADF(order, α; pade=pade)
-    r = synthesis_one_frame!(f, excite, previous_mgc, current_mgc)
+    r = synthesis_one_frame!(f, excite, previous_b, current_b)
     @test any(!isnan(r))
 end
 
 function test_mlsadf_synthesis(order::Int, α::Float64, pade::Int, hopsize::Int)
+    srand(98765)
     T = 1024
     excite = rand(T)
-    mgc = rand(order+1, div(T, hopsize))
+    c = rand(order+1, div(T, hopsize))
+    mgc = MelGeneralizedCepstrum(α, 0.0, c)
 
     f = MLSADF(order, α; pade=pade)
     r = synthesis!(f, excite, mgc, hopsize)
     @test any(!isnan(r))
 end
 
+function test_mlsadf_exception()
+    srand(98765)
+    T = 1024
+    order = 25
+    hopsize = 80
+    excite = rand(T)
+    c = rand(order+1, div(T, hopsize))
+
+    mgc = MelGeneralizedCepstrum(0.0, 0.0, c)
+    f = MLSADF(order, 0.0)
+    synthesis!(f, excite, mgc, hopsize)
+    try
+        synthesis!(f, excite, mgc, hopsize)
+    catch
+        @test false
+    end
+    mgc = MelGeneralizedCepstrum(0.41, 0.0, c)
+    f = MLSADF(order, 0.41)
+    try
+        synthesis!(f, excite, mgc, hopsize)
+    catch
+        @test false
+    end
+    mgc = MelGeneralizedCepstrum(0.41, -0.01, c)
+    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+    mgc = MelGeneralizedCepstrum(0.0, -0.01, c)
+    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+    mgc = MelGeneralizedCepstrum(0.0, -1.0, c)
+    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+end
+
 function test_mglsadf_synthesis_one_frame(order::Int, α::Float64, ns::Int)
     excite = rand(1024)
-    previous_mgc = rand(order+1)
-    current_mgc = rand(order+1)
+    previous_b = rand(order+1)
+    current_b = rand(order+1)
 
     f = MGLSADF(order, α, ns)
-    r = synthesis_one_frame!(f, excite, previous_mgc, current_mgc)
+    r = synthesis_one_frame!(f, excite, previous_b, current_b)
     @test any(!isnan(r))
 end
 
 function test_mglsadf_synthesis(order::Int, α::Float64, ns::Int, hopsize::Int)
     T = 1024
     excite = rand(T)
-    mgc = rand(order+1, div(T, hopsize))
+    c = rand(order+1, div(T, hopsize))
+    mgc = MelGeneralizedCepstrum(α, -1/ns, c)
 
     f = MGLSADF(order, α, ns)
     r = synthesis!(f, excite, mgc, hopsize)
     @test any(!isnan(r))
 end
+
+## Consistency tests
 
 println("poledf: testing")
 test_poledf()
@@ -165,7 +281,25 @@ for α in [0.35, 0.41, 0.544]
     end
 end
 
+## Synthesis with AllPoleDF
+
+test_poledf_exception()
+
+for order in 20:5:40
+    println("poledf_synthesis_one_frame: testing with order=$order")
+    test_poledf_synthesis_one_frame(order)
+end
+
+for order in 20:5:40
+    for hopsize in [80, 160]
+        println("poledf_synthesis: testing with order=$order, hopsize=$hopsize")
+        test_poledf_synthesis(order, hopsize)
+    end
+end
+
 ## Synthesis with LMADF
+
+test_lmadf_exception()
 
 for order in 20:5:40
     for pade in [4, 5]
@@ -184,6 +318,8 @@ for order in 20:5:40
 end
 
 ## Synthesis with MLSADF
+
+test_mlsadf_exception()
 
 for order in 20:5:40
     for α in [0.35, 0.41, 0.544]

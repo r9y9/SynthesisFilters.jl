@@ -110,3 +110,11 @@ glog_gamma(f::MLSADF) = 0.0
 function filter!(f::MLSADF, x::Float64, coef::Vector{Float64})
     filter!(last(f), filter!(first(f), x, [0.0, coef[2]]), coef)
 end
+
+function to_filtcoef(f::MLSADF, mc::MelGeneralizedCepstrum)
+    if !isa(mc, MelCepstrum) && !isa(mc, LinearCepstrum)
+        throw(ArgumentError("unexpected cepstrum form"))
+    end
+    @assert MelGeneralizedCepstrums.allpass_alpha(mc) == allpass_alpha(f)
+    rawdata(mc2b(mc))
+end

@@ -2,7 +2,7 @@
 
 poledf_delay(order::Int) = zeros(order)
 
-type AllPoleDF <: MelGeneralizedCepstrumSynthesisFilter
+type AllPoleDF <: MelLinearPredictionSynthesisFilter
     delay::Vector{Float64}
 
     function AllPoleDF(order::Int)
@@ -24,4 +24,17 @@ function filter!(f::AllPoleDF, x::Float64, a::Vector{Float64})
     d[1] = y
 
     return y
+end
+
+function to_filtcoef(f::AllPoleDF, lpc::MelLinearPredictionCoef)
+    isa(lpc, LinearPredictionCoef) || throw(ArgumentError("unexpected LPC form"))
+    if lpc.loggain
+        return rawdata(lpc)
+    end
+
+    b = copy(rawdata(lpc))
+    for i=1:size(b, 2)
+        b[1,i] = log(b[1,i])
+    end
+    b
 end

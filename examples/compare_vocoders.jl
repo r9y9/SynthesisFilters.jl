@@ -38,11 +38,10 @@ xw .*= win
 
 function test_poledf_synthesis(; order=25, savepath="test16k_poledf.wav")
     println("testing: poledf_synthesis")
-    # lpc equivalent of mgcep
-    lpc = mgcep(xw, order, 0.0, -1.0; otype=5)
+    l = lpc(xw, order)
 
     f = AllPoleDF(order)
-    y = synthesis!(f, base_excitation, rawdata(lpc), hopsize)
+    y = synthesis!(f, base_excitation, l, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -52,7 +51,7 @@ function test_lmadf_synthesis(; order=25, savepath="test16k_lmadf.wav")
     c = mgcep(xw, order, 0.0, 0.0)
 
     f = LMADF(order)
-    y = synthesis!(f, base_excitation, rawdata(c), hopsize)
+    y = synthesis!(f, base_excitation, c, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -63,7 +62,7 @@ function test_mlsadf_synthesis(; order=25, savepath="test16k_mlsadf.wav")
     mc = mcep(xw, order, α)
 
     f = MLSADF(order, α)
-    y = synthesis!(f, base_excitation, rawdata(mc), hopsize)
+    y = synthesis!(f, base_excitation, mc, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -77,7 +76,7 @@ function test_mglsadf_synthesis(; order=25, nstage=6,
 
     # waveform synthesis
     f = MGLSADF(order, α, nstage)
-    y = synthesis!(f, base_excitation, rawdata(mgc), hopsize)
+    y = synthesis!(f, base_excitation, mgc, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end

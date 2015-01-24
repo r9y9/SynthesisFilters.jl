@@ -102,3 +102,8 @@ function filter!(f::LMADF, x::Float64, coef::Vector{Float64})
     y = filter!(first(f), x, coef, 1, 1)
     filter!(last(f), y, coef, 2, m)
 end
+
+function to_filtcoef(f::LMADF, c::MelGeneralizedCepstrum)
+    isa(c, LinearCepstrum) || throw(ArgumentError("unexpected cepstrum form"))
+    rawdata(c)
+end
