@@ -5,16 +5,18 @@ using MelGeneralizedCepstrums
 import MelGeneralizedCepstrums: rawdata
 
 export
+    # Abstract types
     SynthesisFilter,
     MelGeneralizedCepstrumSynthesisFilter, # LMADF or MLSADF or MGLSADF
     MelLinearPredictionSynthesisFilter, # AllPoleDF
 
-    # Speech waveform sysnthesis filters
+    # Speech waveform synthesis filters
     AllPoleDF,            # All Pole Digital filter
     LMADF,                # Log Magnitude Approximation Digital Filter
     MLSADF,               # Mel-Log Spectrum Approximation Digital Filter
     MGLSADF,              # Mel Generalized-Log Spectrum Approximation Digital Filter
 
+    # properties
     allpass_alpha,        # all-pass constant (alpha)
     glog_gamma,           # parameter of generalized log function
     nstage,
