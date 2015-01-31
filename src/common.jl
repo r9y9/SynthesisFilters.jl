@@ -19,12 +19,13 @@ allpass_alpha(f::MelLinearPredictionSynthesisFilter) = error("not implemented")
 # synthesis_one_frame! generates a one frame speech waveform given a excitation
 # signal and successive filter coefficients of a synthesis filter.
 function synthesis_one_frame!(f::SynthesisFilter,
+                              y::AbstractVector, # result will be stored
                               excitation::AbstractVector,
                               bᵗ⁻¹::Vector,
                               bᵗ::Vector)
+    @assert length(y) == length(excitation)
     slope = (bᵗ - bᵗ⁻¹) / length(excitation)
 
-    y = Array(eltype(excitation), length(excitation))
     interpolated_coef = copy(bᵗ⁻¹)
 
     for i=1:length(excitation)
@@ -38,6 +39,14 @@ function synthesis_one_frame!(f::SynthesisFilter,
     y
 end
 
+function synthesis_one_frame!(f::SynthesisFilter,
+                              excitation::AbstractVector,
+                              bᵗ⁻¹::Vector,
+                              bᵗ::Vector)
+    y = Array(eltype(excitation), length(excitation))
+    synthesis_one_frame!(f, y, excitation, bᵗ⁻¹, bᵗ)
+end
+
 # synthesis! generates a speech waveform given a excitation signal and
 # a sequence of spectral envelope paramter.
 function synthesis!(f::SynthesisFilter,
@@ -48,19 +57,20 @@ function synthesis!(f::SynthesisFilter,
     fill!(synthesized, zero(eltype(synthesized)))
 
     bᵗ⁻¹ = b[:,1]
+    bᵗ = similar(bᵗ⁻¹)
+    buf = Array(eltype(excitation), hopsize)
+
     for i=1:size(b, 2)
         if i > 1
-            @inbounds bᵗ⁻¹ = b[:,i-1]
+            bᵗ⁻¹ = b[:,i-1]
         end
-        @inbounds bᵗ = b[:,i]
+        bᵗ = b[:,i]
 
         s, e = (i-1)*hopsize+1, i*hopsize
-        if e > length(excitation)
-            break
-        end
+        e > length(excitation) && break
 
-        x = synthesis_one_frame!(f, excitation[s:e], bᵗ⁻¹, bᵗ)
-        copy!(synthesized, s, x, 1, length(x))
+        synthesis_one_frame!(f, buf, excitation[s:e], bᵗ⁻¹, bᵗ)
+        copy!(synthesized, s, buf, 1, length(buf))
     end
 
     synthesized
