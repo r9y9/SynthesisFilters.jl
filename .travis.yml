@@ -14,4 +14,4 @@ before_install:
   - sudo apt-get install libpcre3-dev julia -y
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 script:
-  - julia -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.clone("https://github.com/r9y9/SPTK.jl"); Pkg.build("SPTK"); Pkg.build("SynthesisFilters"); Pkg.test("SynthesisFilters")'
+  - julia -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.clone("https://github.com/r9y9/MelGeneralizedCepstrums.jl"); Pkg.clone("https://github.com/r9y9/SPTK.jl"); Pkg.build("SPTK"); Pkg.build("SynthesisFilters"); Pkg.test("SynthesisFilters")'
