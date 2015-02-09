@@ -3,6 +3,16 @@ environment:
   - JULIAVERSION: "win32"
   - JULIAVERSION: "win64"
 
+skip_commits:
+# Add [av skip] to commit messages for docfixes, etc to reduce load on queue
+  message: /\[av skip\]/
+
+notifications:
+  - provider: Email
+    on_build_success: false
+    on_build_failure: false
+    on_build_status_changed: false
+
 install:
 # Download most recent Julia Windows binary
   - ps: (new-object net.webclient).DownloadFile($("http://status.julialang.org/download/"+$env:JULIAVERSION), "C:\projects\julia-binary.exe")
