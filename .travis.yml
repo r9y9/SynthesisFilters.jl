@@ -1,17 +1,9 @@
-language: cpp
-compiler:
-  - clang
-notifications:
-  email: false
-env:
-  matrix:
-    - JULIAVERSION="juliareleases"
-    - JULIAVERSION="julianightlies"
-before_install:
-  - sudo add-apt-repository ppa:staticfloat/julia-deps -y
-  - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
-  - sudo apt-get update -qq -y
-  - sudo apt-get install libpcre3-dev julia -y
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+language: julia
+julia:
+  - release
+  - nightly
 script:
-  - julia -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.clone("https://github.com/r9y9/MelGeneralizedCepstrums.jl"); Pkg.clone("https://github.com/r9y9/SPTK.jl"); Pkg.build("SPTK"); Pkg.build("SynthesisFilters"); Pkg.test("SynthesisFilters")'
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia --check-bounds=yes -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.clone("https://github.com/r9y9/MelGeneralizedCepstrums.jl"); Pkg.clone("https://github.com/r9y9/SPTK.jl"); Pkg.build("SPTK"); Pkg.test("SynthesisFilters", coverage=true)'
+after_success:
+- julia -e 'cd(Pkg.dir("SynthesisFilters")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
