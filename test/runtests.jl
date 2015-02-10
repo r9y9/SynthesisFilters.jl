@@ -108,6 +108,12 @@ function test_lmadf_exception()
     @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
     mgc = MelGeneralizedCepstrum(0.0, -1.0, c)
     @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+
+    ## pade approximation
+    @test_throws Exception LMADF(order, pade=3)
+    try LMADF(order; pade=4); catch @test false; end
+    try LMADF(order; pade=5); catch @test false; end
+    @test_throws Exception LMADF(order, pade=6)
 end
 
 function test_mlsadf_synthesis_one_frame(order::Int, α::Float64, pade::Int)
@@ -162,6 +168,12 @@ function test_mlsadf_exception()
     @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
     mgc = MelGeneralizedCepstrum(0.0, -1.0, c)
     @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+
+    ## pade approximation
+    @test_throws Exception MLSADF(order, 0.41; pade=3)
+    try MLSADF(order, 0.41; pade=4); catch @test false; end
+    try MLSADF(order, 0.41; pade=5); catch @test false; end
+    @test_throws Exception MLSADF(order, 0.41; pade=6)
 end
 
 function test_mglsadf_synthesis_one_frame(order::Int, α::Float64, ns::Int)
@@ -203,6 +215,12 @@ end
 
 ## Synthesis with LMADF
 
+let
+    f = LMADF(20)
+    @test allpass_alpha(f) == 0.0
+    @test glog_gamma(f) == 0.0
+end
+
 test_lmadf_exception()
 
 for order in 20:5:40
@@ -222,6 +240,12 @@ for order in 20:5:40
 end
 
 ## Synthesis with MLSADF
+
+let
+    f = MLSADF(20, 0.41)
+    @test allpass_alpha(f) == 0.41
+    @test glog_gamma(f) == 0.0
+end
 
 test_mlsadf_exception()
 
@@ -246,6 +270,14 @@ for order in 20:5:40
 end
 
 ## Synthesis with MGLSADF
+
+let
+    nstage = 10
+    γ = -1/nstage
+    f = MGLSADF(20, 0.41, nstage)
+    @test allpass_alpha(f) == 0.41
+    @test glog_gamma(f) == γ
+end
 
 for order in 20:5:40
     for α in [0.35, 0.41, 0.544]
