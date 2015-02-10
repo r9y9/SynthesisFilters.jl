@@ -4,6 +4,22 @@ using Base.Test
 
 @unix_only include("sptk.jl")
 
+type TestSynthesisFilter <: SynthesisFilter
+end
+type TestMGCSF <: MelGeneralizedCepstrumSynthesisFilter
+end
+type TestMLPSF <: MelLinearPredictionSynthesisFilter
+end
+
+let
+    @test_throws Exception to_filtercoef(TestSynthesisFilter(), rand(10))
+    f = TestMGCSF()
+    @test_throws Exception allpass_alpha(f)
+    @test_throws Exception glog_gamma(f)
+    f = TestMGCSF()
+    @test_throws Exception allpass_alpha(f)
+end
+
 function test_poledf_synthesis_one_frame(order::Int)
     srand(98765)
     excite = rand(1024)
