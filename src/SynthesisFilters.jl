@@ -26,7 +26,7 @@ export
     synthesis!,           #
 
     # low-level interface
-    filter!,              # filtering one sample
+    filt!,                # filtering one sample
     to_filtcoef           # spectral parameter to filter coefficients
 
 for fname in [

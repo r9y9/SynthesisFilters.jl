@@ -13,7 +13,7 @@ end
 
 allpass_alpha(f::MGLSABaseFilter) = f.α
 
-function filter!(bf::MGLSABaseFilter, x::Float64, coef::Vector{Float64})
+function filt!(bf::MGLSABaseFilter, x::Float64, coef::Vector{Float64})
     d = delay(bf)
     y = d[1] * coef[2]
     α = allpass_alpha(bf)
@@ -53,10 +53,10 @@ allpass_alpha(f::MGLSADF) = allpass_alpha(f.filters[1])
 glog_gamma(f::MGLSADF) = -1.0/length(f.filters)
 nstage(f::MGLSADF) = length(f.filters)
 
-function filter!(f::MGLSADF, x::Float64, coef::Vector{Float64})
+function filt!(f::MGLSADF, x::Float64, coef::Vector{Float64})
     y = x
     for i=1:length(f.filters)
-        y = filter!(f.filters[i], y, coef)
+        y = filt!(f.filters[i], y, coef)
     end
     y
 end

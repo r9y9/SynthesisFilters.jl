@@ -10,7 +10,7 @@ type AllPoleDF <: MelLinearPredictionSynthesisFilter
     end
 end
 
-function filter!(f::AllPoleDF, x::Float64, a::Vector{Float64})
+function filt!(f::AllPoleDF, x::Float64, a::Vector{Float64})
     d = delay(f)
     order = length(a) - 1
 

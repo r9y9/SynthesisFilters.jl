@@ -14,7 +14,7 @@ end
 delay(f::Filter) = f.delay
 allpass_alpha(f::MLSABaseFilter) = f.α
 
-function filter!(f::MLSABaseFilter, x::Float64, coef::Vector{Float64})
+function filt!(f::MLSABaseFilter, x::Float64, coef::Vector{Float64})
     d = delay(f)
     α = allpass_alpha(f)
 
@@ -70,13 +70,13 @@ end
 allpass_alpha(f::MLSACascadeFilter) = allpass_alpha(f.filters[1])
 padecoef(f::MLSACascadeFilter) = f.padecoef
 
-function filter!(f::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
+function filt!(f::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
     d = delay(f)
     pade = padecoef(f)
     result, feedback = 0.0, 0.0
 
     for i=length(pade):-1:2
-        @inbounds d[i] = filter!(f.filters[i], d[i-1], coef)
+        @inbounds d[i] = filt!(f.filters[i], d[i-1], coef)
         @inbounds val = d[i] * pade[i]
         if iseven(i)
             feedback += val
@@ -107,8 +107,8 @@ last(f::MLSADF) = f.filters[2]
 allpass_alpha(f::MLSADF) = allpass_alpha(first(f))
 glog_gamma(f::MLSADF) = 0.0
 
-function filter!(f::MLSADF, x::Float64, coef::Vector{Float64})
-    filter!(last(f), filter!(first(f), x, [0.0, coef[2]]), coef)
+function filt!(f::MLSADF, x::Float64, coef::Vector{Float64})
+    filt!(last(f), filt!(first(f), x, [0.0, coef[2]]), coef)
 end
 
 function to_filtcoef(f::MLSADF, mc::MelGeneralizedCepstrum)

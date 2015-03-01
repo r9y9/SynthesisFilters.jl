@@ -9,7 +9,7 @@ type LMABaseFilter <: Filter
     end
 end
 
-function filter!(f::LMABaseFilter, x::Float64, coef::Vector{Float64},
+function filt!(f::LMABaseFilter, x::Float64, coef::Vector{Float64},
                  m1::Int, m2::Int)
     @assert length(coef) == f.order+1
     @assert m1 >= 1
@@ -59,14 +59,14 @@ end
 
 padecoef(f::LMACascadeFilter) = f.padecoef
 
-function filter!(f::LMACascadeFilter, x::Float64, coef::Vector{Float64},
+function filt!(f::LMACascadeFilter, x::Float64, coef::Vector{Float64},
                  m1::Int, m2::Int)
     d = delay(f)
     pade = padecoef(f)
     result, feedback = 0.0, 0.0
 
     for i=length(pade):-1:2
-        @inbounds d[i] = filter!(f.filters[i], d[i-1], coef, m1, m2)
+        @inbounds d[i] = filt!(f.filters[i], d[i-1], coef, m1, m2)
         @inbounds val = d[i] * pade[i]
         if iseven(i)
             feedback += val
@@ -97,10 +97,10 @@ last(f::LMADF) = f.filters[2]
 allpass_alpha(f::LMADF) = 0.0
 glog_gamma(f::LMADF) = 0.0
 
-function filter!(f::LMADF, x::Float64, coef::Vector{Float64})
+function filt!(f::LMADF, x::Float64, coef::Vector{Float64})
     m = length(coef)-1
-    y = filter!(first(f), x, coef, 1, 1)
-    filter!(last(f), y, coef, 2, m)
+    y = filt!(first(f), x, coef, 1, 1)
+    filt!(last(f), y, coef, 2, m)
 end
 
 function to_filtcoef(f::LMADF, c::MelGeneralizedCepstrum)

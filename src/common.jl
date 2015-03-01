@@ -30,7 +30,7 @@ function synthesis_one_frame!(f::SynthesisFilter,
 
     for i=1:length(excitation)
         scaled_excitation = excitation[i] * exp(interpolated_coef[1])
-        y[i] = filter!(f, scaled_excitation, interpolated_coef)
+        y[i] = filt!(f, scaled_excitation, interpolated_coef)
         for j=1:length(slope)
             interpolated_coef[j] += slope[j]
         end
