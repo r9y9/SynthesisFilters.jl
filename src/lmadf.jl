@@ -10,7 +10,7 @@ type LMABaseFilter <: Filter
 end
 
 function filt!(f::LMABaseFilter, x::Float64, coef::Vector{Float64},
-                 m1::Int, m2::Int)
+               m1::Int, m2::Int)
     @assert length(coef) == f.order+1
     @assert m1 >= 1
     @assert m2 < length(coef)

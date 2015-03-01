@@ -39,26 +39,26 @@ function synthesis_one_frame!(f::SynthesisFilter,
     y
 end
 
-function synthesis_one_frame!(f::SynthesisFilter,
-                              excitation::AbstractVector,
-                              bᵗ⁻¹::Vector,
-                              bᵗ::Vector)
-    y = Array(eltype(excitation), length(excitation))
+function synthesis_one_frame!{T}(f::SynthesisFilter,
+                                 excitation::AbstractVector{T},
+                                 bᵗ⁻¹::Vector{T},
+                                 bᵗ::Vector{T})
+    y = Array(T, length(excitation))
     synthesis_one_frame!(f, y, excitation, bᵗ⁻¹, bᵗ)
 end
 
 # synthesis! generates a speech waveform given a excitation signal and
 # a sequence of spectral envelope paramter.
-function synthesis!(f::SynthesisFilter,
-                    excitation::AbstractVector,
-                    b::Matrix,
-                    hopsize::Integer)
+function synthesis!{T}(f::SynthesisFilter,
+                       excitation::AbstractVector{T},
+                       b::Matrix{T},
+                       hopsize::Integer)
     synthesized = similar(excitation)
-    fill!(synthesized, zero(eltype(synthesized)))
+    fill!(synthesized, zero(T))
 
     bᵗ⁻¹ = b[:,1]
     bᵗ = similar(bᵗ⁻¹)
-    buf = Array(eltype(excitation), hopsize)
+    buf = Array(T, hopsize)
 
     for i=1:size(b, 2)
         if i > 1
