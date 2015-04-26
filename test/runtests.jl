@@ -14,10 +14,10 @@ end
 let
     @test_throws Exception to_filtercoef(TestSynthesisFilter(), rand(10))
     f = TestMGCSF()
-    @test_throws Exception allpass_alpha(f)
-    @test_throws Exception glog_gamma(f)
+    @test_throws Exception SynthesisFilters.allpass_alpha(f)
+    @test_throws Exception SynthesisFilters.glog_gamma(f)
     f = TestMGCSF()
-    @test_throws Exception allpass_alpha(f)
+    @test_throws Exception SynthesisFilters.allpass_alpha(f)
 end
 
 function test_poledf_synthesis_one_frame(order::Int)
@@ -217,8 +217,8 @@ end
 
 let
     f = LMADF(20)
-    @test allpass_alpha(f) == 0.0
-    @test glog_gamma(f) == 0.0
+    @test SynthesisFilters.allpass_alpha(f) == 0.0
+    @test SynthesisFilters.glog_gamma(f) == 0.0
 end
 
 test_lmadf_exception()
@@ -243,8 +243,8 @@ end
 
 let
     f = MLSADF(20, 0.41)
-    @test allpass_alpha(f) == 0.41
-    @test glog_gamma(f) == 0.0
+    @test SynthesisFilters.allpass_alpha(f) == 0.41
+    @test SynthesisFilters.glog_gamma(f) == 0.0
 end
 
 test_mlsadf_exception()
@@ -275,8 +275,8 @@ let
     nstage = 10
     γ = -1/nstage
     f = MGLSADF(20, 0.41, nstage)
-    @test allpass_alpha(f) == 0.41
-    @test glog_gamma(f) == γ
+    @test SynthesisFilters.allpass_alpha(f) == 0.41
+    @test SynthesisFilters.glog_gamma(f) == γ
 end
 
 for order in 20:5:40

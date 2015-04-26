@@ -2,6 +2,7 @@ module SynthesisFilters
 
 using MelGeneralizedCepstrums
 
+import Base: filt!
 import MelGeneralizedCepstrums: rawdata
 
 export

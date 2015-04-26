@@ -46,8 +46,8 @@ function test_mlsadf(α::Float64, pade::Int)
     order = length(mc)-1
 
     f = MLSADF(order, α, pade=pade)
-    @test allpass_alpha(f) == α
-    @test glog_gamma(f) == 0.0
+    @test SynthesisFilters.allpass_alpha(f) == α
+    @test SynthesisFilters.glog_gamma(f) == 0.0
 
     # setup for SPTK mlsadf
     delay = SPTK.mlsadf_delay(order, pade)
@@ -67,9 +67,9 @@ function test_mglsadf(α::Float64=0.41, ns::Int=10)
     order = length(mc)-1
 
     f = MGLSADF(order, α, ns)
-    @test allpass_alpha(f) == α
+    @test SynthesisFilters.allpass_alpha(f) == α
     @test nstage(f) == ns
-    @test glog_gamma(f) == -1.0/ns
+    @test SynthesisFilters.glog_gamma(f) == -1.0/ns
 
     # setup for SPTK mlsadf
     delay = SPTK.mglsadf_delay(order, ns)
