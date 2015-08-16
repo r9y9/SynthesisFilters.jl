@@ -46,7 +46,7 @@ xw .*= win
 
 function test_poledf_synthesis(; order=25, savepath="test16k_poledf.wav")
     println("testing: poledf_synthesis")
-    l = lpc(xw, order, use_mgcep=true)
+    l = estimate(LinearPredictionCoef(order), xw, use_mgcep=true)
 
     f = AllPoleDF(order)
     y = synthesis!(f, base_excitation, l, hopsize)
@@ -56,7 +56,7 @@ end
 
 function test_lmadf_synthesis(; order=25, savepath="test16k_lmadf.wav")
     println("testing: lmadf_synthesis")
-    c = mgcep(xw, order, 0.0, 0.0)
+    c = estimate(LinearCepstrum(order), xw)
 
     f = LMADF(order)
     y = synthesis!(f, base_excitation, c, hopsize)
@@ -67,7 +67,7 @@ end
 function test_mlsadf_synthesis(; order=25, savepath="test16k_mlsadf.wav")
     println("testing: mlsadf_synthesis")
     α = mcepalpha(fs) # automatic α selection
-    mc = mcep(xw, order, α)
+    mc = estimate(MelCepstrum(order, α), xw)
 
     f = MLSADF(order, α)
     y = synthesis!(f, base_excitation, mc, hopsize)
@@ -80,7 +80,7 @@ function test_mglsadf_synthesis(; order=25, nstage=6,
     println("testing: mglsadf_synthesis")
     α = mcepalpha(fs)
     γ = -1./nstage
-    mgc = mgcep(xw, order, α, γ)
+    mgc = estimate(MelGeneralizedCepstrum(order, α, γ), xw)
 
     # waveform synthesis
     f = MGLSADF(order, α, nstage)
