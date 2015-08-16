@@ -98,7 +98,7 @@ for α in [0.35, 0.41, 0.544]
 end
 
 for α in [0.35, 0.41, 0.544]
-    for ns in 1:15
+    for ns in 1:10
         println("mglsadf: testing with α=$α, nstage=$ns, γ=$(-1.0/ns)")
         test_mglsadf(α, ns)
     end
