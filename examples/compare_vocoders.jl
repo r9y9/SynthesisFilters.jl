@@ -46,7 +46,7 @@ xw .*= win
 
 function test_poledf_synthesis(; order=25, savepath="test16k_poledf.wav")
     println("testing: poledf_synthesis")
-    l = lpc(xw, order)
+    l = lpc(xw, order, use_mgcep=true)
 
     f = AllPoleDF(order)
     y = synthesis!(f, base_excitation, l, hopsize)

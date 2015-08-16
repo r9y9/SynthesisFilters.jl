@@ -111,10 +111,8 @@ function filt!(f::MLSADF, x::Float64, coef::Vector{Float64})
     filt!(last(f), filt!(first(f), x, [0.0, coef[2]]), coef)
 end
 
-function to_filtcoef(f::MLSADF, mc::MelGeneralizedCepstrum)
-    if !isa(mc, MelCepstrum) && !isa(mc, LinearCepstrum)
-        throw(ArgumentError("unexpected cepstrum form"))
-    end
-    @assert MelGeneralizedCepstrums.allpass_alpha(mc) == allpass_alpha(f)
-    rawdata(mc2b(mc))
+function to_filtcoef{T<:Union{MelCepstrum,LinearCepstrum}}(f::MLSADF,
+                                                          mc::SpectralParamState{T})
+    @assert MelGeneralizedCepstrums.allpass_alpha(paramdef(mc)) == allpass_alpha(f)
+    rawdata(mgc2b(mc))
 end

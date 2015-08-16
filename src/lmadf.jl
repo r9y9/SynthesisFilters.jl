@@ -103,7 +103,6 @@ function filt!(f::LMADF, x::Float64, coef::Vector{Float64})
     filt!(last(f), y, coef, 2, m)
 end
 
-function to_filtcoef(f::LMADF, c::MelGeneralizedCepstrum)
-    isa(c, LinearCepstrum) || throw(ArgumentError("unexpected cepstrum form"))
-    rawdata(c)
+function to_filtcoef(f::LMADF, c::SpectralParamState{LinearCepstrum})
+    copy(rawdata(c))
 end

@@ -2,7 +2,7 @@
 
 poledf_delay(order::Int) = zeros(order)
 
-type AllPoleDF <: MelLinearPredictionSynthesisFilter
+type AllPoleDF <: LinearPredictionVariantsSynthesisFilter
     delay::Vector{Float64}
 
     function AllPoleDF(order::Int)
@@ -26,13 +26,10 @@ function filt!(f::AllPoleDF, x::Float64, a::Vector{Float64})
     return y
 end
 
-function to_filtcoef(f::AllPoleDF, lpc::MelLinearPredictionCoef)
-    isa(lpc, LinearPredictionCoef) || throw(ArgumentError("unexpected LPC form"))
-    if lpc.loggain
-        return rawdata(lpc)
-    end
+function to_filtcoef(f::AllPoleDF, state::SpectralParamState{LinearPredictionCoef})
+    has_loggain(state) && return copy(rawdata(state))
 
-    b = copy(rawdata(lpc))
+    b = copy(rawdata(state))
     for i=1:size(b, 2)
         b[1,i] = log(b[1,i])
     end

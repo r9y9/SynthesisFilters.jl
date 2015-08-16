@@ -1,20 +1,32 @@
+import MelGeneralizedCepstrums: allpass_alpha, glog_gamma
+
 abstract Filter
 abstract SynthesisFilter <: Filter
 
+### Generic interfaces ###
+
 # A synthesis filter must provide conversion from spectral parameter
-# (e.g. mel-cepstrum) to coefficients of a synthesis filter.
+# (e.g. mel-cepstrum) to filter coefficients.
 function to_filtcoef(f::SynthesisFilter, param::AbstractArray)
-    error("no conversion implementation found")
+    error("cannot determine how to convert paramters")
 end
+
+### Interfaces for mel-generalized ceptrum synthesis filters ###
 
 abstract MelGeneralizedCepstrumSynthesisFilter <: SynthesisFilter
 
-allpass_alpha(f::MelGeneralizedCepstrumSynthesisFilter) = error("not implemented")
-glog_gamma(f::MelGeneralizedCepstrumSynthesisFilter) = error("not implemented")
+function allpass_alpha(f::MelGeneralizedCepstrumSynthesisFilter)
+    error("should provide get access to allpass constant")
+end
 
-abstract MelLinearPredictionSynthesisFilter <: SynthesisFilter
+function glog_gamma(f::MelGeneralizedCepstrumSynthesisFilter)
+    error("should provide get access to glog gamma")
+end
 
-allpass_alpha(f::MelLinearPredictionSynthesisFilter) = error("not implemented")
+# LPC, PARCOR and LSP
+abstract LinearPredictionVariantsSynthesisFilter <: SynthesisFilter
+
+### Waveform synthesis implementation ###
 
 # synthesis_one_frame! generates a one frame speech waveform given a excitation
 # signal and successive filter coefficients of a synthesis filter.
@@ -76,16 +88,16 @@ function synthesis!{T}(f::SynthesisFilter,
     synthesized
 end
 
-function synthesis!(f::MelGeneralizedCepstrumSynthesisFilter,
+function synthesis!{T<:MelGeneralizedCepstrum}(f::MelGeneralizedCepstrumSynthesisFilter,
                     excitation::AbstractVector,
-                    mgc::MelGeneralizedCepstrum,
+                    mgc::SpectralParamState{T},
                     hopsize::Integer)
     synthesis!(f, excitation, to_filtcoef(f, mgc), hopsize)
 end
 
-function synthesis!(f::MelLinearPredictionSynthesisFilter,
+function synthesis!{T<:LinearPredictionCoefVariants}(f::LinearPredictionVariantsSynthesisFilter,
                     excitation::AbstractVector,
-                    mlpc::MelLinearPredictionCoef,
+                    mlpc::SpectralParamState{T},
                     hopsize::Integer)
     synthesis!(f, excitation, to_filtcoef(f, mlpc), hopsize)
 end

@@ -3,13 +3,12 @@ module SynthesisFilters
 using MelGeneralizedCepstrums
 
 import Base: filt!
-import MelGeneralizedCepstrums: rawdata
 
 export
     # Abstract types
     SynthesisFilter,
     MelGeneralizedCepstrumSynthesisFilter, # LMADF or MLSADF or MGLSADF
-    MelLinearPredictionSynthesisFilter, # AllPoleDF
+    LinearPredictionVariantsSynthesisFilter, # AllPoleDF
 
     # Speech waveform synthesis filters
     AllPoleDF,            # All Pole Digital filter

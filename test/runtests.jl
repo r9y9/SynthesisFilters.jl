@@ -8,7 +8,7 @@ type TestSynthesisFilter <: SynthesisFilter
 end
 type TestMGCSF <: MelGeneralizedCepstrumSynthesisFilter
 end
-type TestMLPSF <: MelLinearPredictionSynthesisFilter
+type TestMLPSF <: LinearPredictionVariantsSynthesisFilter
 end
 
 let
@@ -16,7 +16,7 @@ let
     f = TestMGCSF()
     @test_throws Exception SynthesisFilters.allpass_alpha(f)
     @test_throws Exception SynthesisFilters.glog_gamma(f)
-    f = TestMGCSF()
+    f = TestMLPSF()
     @test_throws Exception SynthesisFilters.allpass_alpha(f)
 end
 
@@ -33,10 +33,10 @@ end
 
 function test_poledf_synthesis(order::Int, hopsize::Int)
     srand(98765)
-    T = 1024
-    excite = rand(T)
-    c = rand(order+1, div(T, hopsize))
-    l = MelLinearPredictionCoef(0.0, c, false)
+    N = 1024
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
+    l = estimate(LinearPredictionCoef(order), x)
 
     f = AllPoleDF(order)
     r = synthesis!(f, excite, l, hopsize)
@@ -45,22 +45,30 @@ end
 
 function test_poledf_exception()
     srand(98765)
-    T = 1024
+    N = 1024
     order = 25
     hopsize = 80
-    excite = rand(T)
-    c = rand(order+1, div(T, hopsize))
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
 
-    l = MelLinearPredictionCoef(0.0, c, false)
+    l = estimate(LinearPredictionCoef(order), x)
     f = AllPoleDF(order)
     try
         synthesis!(f, excite, l, hopsize)
     catch
         @test false
     end
-    l = MelLinearPredictionCoef(0.41, c, false)
-    @test_throws ArgumentError synthesis!(f, excite, l, hopsize)
+
+    for def in [LinearCepstrum(order),
+                GeneralizedCepstrum(order, -0.1),
+                MelCepstrum(order, 0.41),
+                MelGeneralizedCepstrum(order, 0.41, -0.1)
+                ]
+        l = estimate(def, x)
+        @test_throws Exception synthesis!(f, excite, l, hopsize)
+    end
 end
+
 
 function test_lmadf_synthesis_one_frame(order::Int, pade::Int)
     srand(98765)
@@ -75,10 +83,10 @@ end
 
 function test_lmadf_synthesis(order::Int, pade::Int, hopsize::Int)
     srand(98765)
-    T = 1024
-    excite = rand(T)
-    c = rand(order+1, div(T, hopsize))
-    mgc = MelGeneralizedCepstrum(0.0, 0.0, c)
+    N = 1024
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
+    mgc = estimate(LinearCepstrum(order), x)
 
     f = LMADF(order; pade=pade)
     r = synthesis!(f, excite, mgc, hopsize)
@@ -87,27 +95,29 @@ end
 
 function test_lmadf_exception()
     srand(98765)
-    T = 1024
+    N = 1024
     order = 25
     hopsize = 80
-    excite = rand(T)
-    c = rand(order+1, div(T, hopsize))
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
 
-    mgc = MelGeneralizedCepstrum(0.0, 0.0, c)
+    mgc = estimate(LinearCepstrum(order), x)
     f = LMADF(order)
     try
         synthesis!(f, excite, mgc, hopsize)
     catch
         @test false
     end
-    mgc = MelGeneralizedCepstrum(0.41, 0.0, c)
-    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
-    mgc = MelGeneralizedCepstrum(0.41, -0.01, c)
-    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
-    mgc = MelGeneralizedCepstrum(0.0, -0.01, c)
-    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
-    mgc = MelGeneralizedCepstrum(0.0, -1.0, c)
-    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+
+    for def in [
+                MelCepstrum(order, 0.41),
+                GeneralizedCepstrum(order, -0.01),
+                MelGeneralizedCepstrum(order, 0.41, -0.01),
+                AllPoleCepstrum(order)
+                ]
+        mgc = estimate(def, x)
+        @test_throws Exception synthesis!(f, excite, mgc, hopsize)
+    end
 
     ## pade approximation
     @test_throws Exception LMADF(order, pade=3)
@@ -129,10 +139,10 @@ end
 
 function test_mlsadf_synthesis(order::Int, α::Float64, pade::Int, hopsize::Int)
     srand(98765)
-    T = 1024
-    excite = rand(T)
-    c = rand(order+1, div(T, hopsize))
-    mgc = MelGeneralizedCepstrum(α, 0.0, c)
+    N = 1024
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
+    mgc = estimate(MelCepstrum(order, α), x)
 
     f = MLSADF(order, α; pade=pade)
     r = synthesis!(f, excite, mgc, hopsize)
@@ -141,13 +151,13 @@ end
 
 function test_mlsadf_exception()
     srand(98765)
-    T = 1024
+    N = 1024
     order = 25
     hopsize = 80
-    excite = rand(T)
-    c = rand(order+1, div(T, hopsize))
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
 
-    mgc = MelGeneralizedCepstrum(0.0, 0.0, c)
+    mgc = estimate(LinearCepstrum(order), x)
     f = MLSADF(order, 0.0)
     synthesis!(f, excite, mgc, hopsize)
     try
@@ -155,19 +165,23 @@ function test_mlsadf_exception()
     catch
         @test false
     end
-    mgc = MelGeneralizedCepstrum(0.41, 0.0, c)
+    mgc = estimate(MelCepstrum(order, 0.41), x)
     f = MLSADF(order, 0.41)
     try
         synthesis!(f, excite, mgc, hopsize)
     catch
         @test false
     end
-    mgc = MelGeneralizedCepstrum(0.41, -0.01, c)
-    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
-    mgc = MelGeneralizedCepstrum(0.0, -0.01, c)
-    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
-    mgc = MelGeneralizedCepstrum(0.0, -1.0, c)
-    @test_throws ArgumentError synthesis!(f, excite, mgc, hopsize)
+
+
+    for def in [
+                GeneralizedCepstrum(order, -0.01),
+                MelGeneralizedCepstrum(order, 0.41, -0.01),
+                AllPoleCepstrum(order)
+                ]
+        mgc = estimate(def, x)
+        @test_throws Exception synthesis!(f, excite, mgc, hopsize)
+    end
 
     ## pade approximation
     @test_throws Exception MLSADF(order, 0.41; pade=3)
@@ -187,10 +201,10 @@ function test_mglsadf_synthesis_one_frame(order::Int, α::Float64, ns::Int)
 end
 
 function test_mglsadf_synthesis(order::Int, α::Float64, ns::Int, hopsize::Int)
-    T = 1024
-    excite = rand(T)
-    c = rand(order+1, div(T, hopsize))
-    mgc = MelGeneralizedCepstrum(α, -1/ns, c)
+    N = 1024
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
+    mgc = estimate(MelGeneralizedCepstrum(order, α, -1/ns), x)
 
     f = MGLSADF(order, α, ns)
     r = synthesis!(f, excite, mgc, hopsize)
