@@ -5,6 +5,12 @@ abstract SynthesisFilter <: Filter
 
 ### Generic interfaces ###
 
+# Note that f has state and filt! should update state value in this function
+# TODO(ryuichi): separate state and filt definition?
+function filt!(f::SynthesisFilter, x::Real, coef::AbstractVector)
+    error("should provide sample-by-sample filt!")
+end
+
 # A synthesis filter must provide conversion from spectral parameter
 # (e.g. mel-cepstrum) to filter coefficients.
 function to_filtcoef(f::SynthesisFilter, param::AbstractArray)

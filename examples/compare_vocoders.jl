@@ -54,6 +54,26 @@ function test_poledf_synthesis(; order=25, savepath="test16k_poledf.wav")
     println("Dumped to $savepath")
 end
 
+function test_ltcdf_synthesis(; order=25, savepath="test16k_ltcdf.wav")
+    println("testing: ltcdf_synthesis")
+    par = lpc2par(estimate(LinearPredictionCoef(order), xw, use_mgcep=true))
+
+    f = AllPoleLatticeDF(order)
+    y = synthesis!(f, base_excitation, par, hopsize)
+    wavwrite(y, savepath; Fs=fs)
+    println("Dumped to $savepath")
+end
+
+function test_lspdf_synthesis(; order=20, savepath="test16k_lspdf.wav")
+    println("testing: lspdf_synthesis")
+    l = lpc2lsp(estimate(LinearPredictionCoef(order), xw, use_mgcep=true))
+
+    f = LSPDF(order)
+    y = synthesis!(f, base_excitation, l, hopsize)
+    wavwrite(y, savepath; Fs=fs)
+    println("Dumped to $savepath")
+end
+
 function test_lmadf_synthesis(; order=25, savepath="test16k_lmadf.wav")
     println("testing: lmadf_synthesis")
     c = estimate(LinearCepstrum(order), xw)
@@ -90,6 +110,8 @@ function test_mglsadf_synthesis(; order=25, nstage=6,
 end
 
 @time test_poledf_synthesis()
+@time test_ltcdf_synthesis()
+@time test_lspdf_synthesis()
 @time test_lmadf_synthesis()
 @time test_mlsadf_synthesis()
 @time test_mglsadf_synthesis()
