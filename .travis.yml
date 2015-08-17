@@ -1,8 +1,12 @@
 language: julia
-sudo: false
+os:
+  - linux
+  - osx
 julia:
 #  - release
   - nightly
+notifications:
+  email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia --check-bounds=yes -e 'Pkg.init(); Pkg.clone(pwd()); Pkg.clone("https://github.com/r9y9/MelGeneralizedCepstrums.jl"); Pkg.clone("https://github.com/r9y9/SPTK.jl"); Pkg.build("SPTK"); Pkg.test("SynthesisFilters", coverage=true)'
