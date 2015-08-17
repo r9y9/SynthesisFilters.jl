@@ -13,6 +13,7 @@ end
 
 let
     @test_throws Exception to_filtercoef(TestSynthesisFilter(), rand(10))
+    @test_throws Exception filt!(TestSynthesisFilter(), 1.0, rand(10))
     f = TestMGCSF()
     @test_throws Exception SynthesisFilters.allpass_alpha(f)
     @test_throws Exception SynthesisFilters.glog_gamma(f)
