@@ -2,9 +2,11 @@
 #
 # After you've run the script, you'll get the following synthesized wav files:
 # 1. test16k_poledf.wav
-# 2. test16k_lmadf.wav
-# 3. test16k_mlsadf.wav
-# 4. test16k_mglsadf.wav
+# 2. test16k_ltcdf.wav
+# 3. test16k_lspdf.wav
+# 4. test16k_lmadf.wav
+# 5. test16k_mlsadf.wav
+# 6. test16k_mglsadf.wav
 #
 # The original wav file is found in data/test16k.wav.
 #
