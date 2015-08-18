@@ -5,14 +5,18 @@
 [![Coverage Status](https://coveralls.io/repos/r9y9/SynthesisFilters.jl/badge.svg?branch=master)](https://coveralls.io/r/r9y9/SynthesisFilters.jl?branch=master)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE.md)
 
-SynthesisFilters.jl provides waveform generation filters for speech synthesis, especially from mel-generalized cepstrum. The core is re-coded from [Speech Signal Processing Toolkit (SPTK)](http://sp-tk.sourceforge.net/).
+SynthesisFilters.jl provides waveform generation filters for speech synthesis, especially from mel-generalized cepstrum.
+
+Note that this package is built on top of [SPTK.jl](https://github.com/r9y9/SPTK.jl). A part of the core is re-writen in Julia language from [Speech Signal Processing Toolkit (SPTK)](http://sp-tk.sourceforge.net/).
 
 ## Features
 
-- All Pole Digital Filter (AllPoleDF)
-- Log Magnitude Approximation Digital Filter (LMADF)
-- Mel-Log Spectrum Approximation Digital Filter (MLSADF)
-- Mel Generalized-Log Spectrum Approximation Digital Filter (MGLSADF)
+- **AllPoleDF**: All-pole digital filter for synthesis from LPC
+- **LSPDF**: LSP digital filter for synthesis from LSP
+- **LTCDF**: All-pole lattice digital filter for synthesis from PARCOR
+- **LMADF**: Log magnitude approximation digital filter for synthesis from cepstrum
+- **MLSADF**: Mel-log spectrum approximation digital filter for synthesis from mel-cepstrum
+- **MGLSADF**: Mel generalized-log spectrum approximation digital filter for synthesis from mel-generalized cepstrum
 
 ## Compare vocoders
 
