@@ -206,13 +206,13 @@ end
 
 test_poledf_exception()
 
-for order in 20:5:40
+for order in 20:5:30
     println("poledf_synthesis_one_frame: testing with order=$order")
     f = AllPoleDF(order)
     test_synthesis_one_frame(f, order)
 end
 
-for order in 20:5:40
+for order in 20:5:30
     for hopsize in [80, 160]
         println("poledf_synthesis: testing with order=$order, hopsize=$hopsize")
         test_poledf_synthesis(order, hopsize)
@@ -221,13 +221,13 @@ end
 
 ### Synthesis with AllPoleLatticeDF ###
 
-for order in 20:5:40
+for order in 20:5:30
     println("ltcdf_synthesis_one_frame: testing with order=$order")
     f = AllPoleLatticeDF(order)
     test_synthesis_one_frame(f, order)
 end
 
-for order in 20:5:40
+for order in 20:5:30
     for hopsize in [80, 160]
         println("ltcdf_synthesis: testing with order=$order, hopsize=$hopsize")
         test_ltcdf_synthesis(order, hopsize)
@@ -236,13 +236,13 @@ end
 
 ### Synthesis with LSPDF ###
 
-for order in 20:5:40
+for order in 20:5:30
     println("lspdf_synthesis_one_frame: testing with order=$order")
     f = LSPDF(order)
     test_synthesis_one_frame(f, order)
 end
 
-for order in 20:5:40
+for order in 20:5:30
     for hopsize in [80, 160]
         println("lspdf_synthesis: testing with order=$order, hopsize=$hopsize")
         test_lspdf_synthesis(order, hopsize)
