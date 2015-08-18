@@ -12,8 +12,8 @@ Note that this package is built on top of [SPTK.jl](https://github.com/r9y9/SPTK
 ## Features
 
 - **AllPoleDF**: All-pole digital filter for synthesis from LPC
+- **AllPoleLatticeDF**: All-pole lattice digital filter for synthesis from PARCOR
 - **LSPDF**: LSP digital filter for synthesis from LSP
-- **LTCDF**: All-pole lattice digital filter for synthesis from PARCOR
 - **LMADF**: Log magnitude approximation digital filter for synthesis from cepstrum
 - **MLSADF**: Mel-log spectrum approximation digital filter for synthesis from mel-cepstrum
 - **MGLSADF**: Mel generalized-log spectrum approximation digital filter for synthesis from mel-generalized cepstrum
