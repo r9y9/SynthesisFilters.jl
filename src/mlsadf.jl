@@ -112,7 +112,7 @@ function filt!(f::MLSADF, x::Float64, coef::Vector{Float64})
 end
 
 function to_filtcoef{T<:Union{MelCepstrum,LinearCepstrum}}(f::MLSADF,
-                                                          mc::SpectralParamState{T})
-    @assert MelGeneralizedCepstrums.allpass_alpha(paramdef(mc)) == allpass_alpha(f)
+                                                           mc::SpectralParamState{T})
+    @assert allpass_alpha(paramdef(mc)) == allpass_alpha(f)
     rawdata(mgc2b(mc))
 end

@@ -64,7 +64,7 @@ end
 function to_filtcoef{T<:MelGeneralizedCepstrum}(f::MGLSADF,
                                                 mgc::SpectralParamState{T})
     def = paramdef(mgc)
-    @assert MelGeneralizedCepstrums.allpass_alpha(def) == allpass_alpha(f)
-    @assert MelGeneralizedCepstrums.glog_gamma(def) == glog_gamma(f)
+    @assert allpass_alpha(def) == allpass_alpha(f)
+    @assert glog_gamma(def) == glog_gamma(f)
     rawdata(mgc2b(mgc))
 end
