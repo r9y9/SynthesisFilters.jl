@@ -49,9 +49,7 @@ xw .*= win
 function test_poledf_synthesis(; order=25, savepath="test16k_poledf.wav")
     println("testing: poledf_synthesis")
     l = estimate(LinearPredictionCoef(order), xw, use_mgcep=true)
-
-    f = AllPoleDF(order)
-    y = synthesis!(f, base_excitation, l, hopsize)
+    y = synthesis(base_excitation, l, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -59,9 +57,7 @@ end
 function test_ltcdf_synthesis(; order=25, savepath="test16k_ltcdf.wav")
     println("testing: ltcdf_synthesis")
     par = lpc2par(estimate(LinearPredictionCoef(order), xw, use_mgcep=true))
-
-    f = AllPoleLatticeDF(order)
-    y = synthesis!(f, base_excitation, par, hopsize)
+    y = synthesis(base_excitation, par, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -69,9 +65,7 @@ end
 function test_lspdf_synthesis(; order=20, savepath="test16k_lspdf.wav")
     println("testing: lspdf_synthesis")
     l = lpc2lsp(estimate(LinearPredictionCoef(order), xw, use_mgcep=true))
-
-    f = LSPDF(order)
-    y = synthesis!(f, base_excitation, l, hopsize)
+    y = synthesis(base_excitation, l, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -79,9 +73,7 @@ end
 function test_lmadf_synthesis(; order=25, savepath="test16k_lmadf.wav")
     println("testing: lmadf_synthesis")
     c = estimate(LinearCepstrum(order), xw)
-
-    f = LMADF(order)
-    y = synthesis!(f, base_excitation, c, hopsize)
+    y = synthesis(base_excitation, c, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -90,9 +82,7 @@ function test_mlsadf_synthesis(; order=25, savepath="test16k_mlsadf.wav")
     println("testing: mlsadf_synthesis")
     α = mcepalpha(fs) # automatic α selection
     mc = estimate(MelCepstrum(order, α), xw)
-
-    f = MLSADF(order, α)
-    y = synthesis!(f, base_excitation, mc, hopsize)
+    y = synthesis(base_excitation, mc, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
@@ -103,10 +93,7 @@ function test_mglsadf_synthesis(; order=25, nstage=6,
     α = mcepalpha(fs)
     γ = -1./nstage
     mgc = estimate(MelGeneralizedCepstrum(order, α, γ), xw)
-
-    # waveform synthesis
-    f = MGLSADF(order, α, nstage)
-    y = synthesis!(f, base_excitation, mgc, hopsize)
+    y = synthesis(base_excitation, mgc, hopsize)
     wavwrite(y, savepath; Fs=fs)
     println("Dumped to $savepath")
 end
