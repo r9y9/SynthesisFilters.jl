@@ -2,7 +2,7 @@ using MelGeneralizedCepstrums
 using SynthesisFilters
 using Base.Test
 
-@unix_only include("sptk.jl")
+# @unix_only include("sptk.jl")
 
 type TestSynthesisFilter <: SynthesisFilter
 end
@@ -43,6 +43,26 @@ function test_poledf_synthesis(order::Int, hopsize::Int)
     @test any(!isnan(r))
 end
 
+function test_synthesis(def::SpectralParam, hopsize)
+    srand(98765)
+    N = 512
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
+
+    order = param_order(def)
+
+    if isa(def, LineSpectralPair)
+        state = lpc2lsp(estimate(LinearPredictionCoef(order), x))
+    elseif isa(def, PartialAutoCorrelation)
+        state = lpc2par(estimate(LinearPredictionCoef(order), x))
+    else
+        state = estimate(def, x)
+    end
+
+    r = synthesis(excite, state, hopsize)
+    @test any(!isnan(r))
+end
+
 function test_poledf_exception()
     srand(98765)
     N = 512
@@ -53,11 +73,7 @@ function test_poledf_exception()
 
     l = estimate(LinearPredictionCoef(order), x)
     f = AllPoleDF(order)
-    try
-        synthesis!(f, excite, l, hopsize)
-    catch
-        @test false
-    end
+    synthesis!(f, excite, l, hopsize)
 
     for def in [LinearCepstrum(order),
                 GeneralizedCepstrum(order, -0.1),
@@ -115,11 +131,7 @@ function test_lmadf_exception()
 
     mgc = estimate(LinearCepstrum(order), x)
     f = LMADF(order)
-    try
-        synthesis!(f, excite, mgc, hopsize)
-    catch
-        @test false
-    end
+    synthesis!(f, excite, mgc, hopsize)
 
     for def in [
                 MelCepstrum(order, 0.41),
@@ -158,22 +170,14 @@ function test_mlsadf_exception()
     excite = rand(N)
     x = rand(N, div(N, hopsize))
 
+    # should accept LinearCepstrum
     mgc = estimate(LinearCepstrum(order), x)
     f = MLSADF(order, 0.0)
     synthesis!(f, excite, mgc, hopsize)
-    try
-        synthesis!(f, excite, mgc, hopsize)
-    catch
-        @test false
-    end
+
     mgc = estimate(MelCepstrum(order, 0.41), x)
     f = MLSADF(order, 0.41)
-    try
-        synthesis!(f, excite, mgc, hopsize)
-    catch
-        @test false
-    end
-
+    synthesis!(f, excite, mgc, hopsize)
 
     for def in [
                 GeneralizedCepstrum(order, -0.01),
@@ -200,6 +204,27 @@ function test_mglsadf_synthesis(order::Int, α::Float64, ns::Int, hopsize::Int)
     f = MGLSADF(order, α, ns)
     r = synthesis!(f, excite, mgc, hopsize)
     @test any(!isnan(r))
+end
+
+function test_mglsadf_exceptions()
+    N = 512
+    order = 25
+    hopsize = 80
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
+
+    ns = 10.5
+    α = 0.41
+    mgc = estimate(MelGeneralizedCepstrum(order, α, -1/ns), x)
+    # should raise exception for non-integer ns
+    @test_throws Exception synthesis(excite, mgc, hopsize)
+end
+
+function test_synthesis()
+    N = 512
+    excite = rand(N)
+    x = rand(N, div(N, hopsize))
+    mgc = estimate(MelGeneralizedCepstrum(order, α, -1/ns), x)
 end
 
 ### Synthesis with AllPoleDF ###
@@ -336,4 +361,21 @@ for order in 20:5:30
             end
         end
     end
+end
+
+test_mglsadf_exceptions()
+
+### Test Syntehsis ###
+
+for def in [
+            LinearPredictionCoef(20),
+            LineSpectralPair(20),
+            PartialAutoCorrelation(20),
+            LinearCepstrum(20),
+            MelCepstrum(20, 0.41),
+            GeneralizedCepstrum(20, -1/10),
+            MelGeneralizedCepstrum(20, 0.41, -1/10)
+            ]
+    println("test_synthesis: testing with $(def)")
+    test_synthesis(def, 80)
 end

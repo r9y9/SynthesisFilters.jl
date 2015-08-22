@@ -39,14 +39,14 @@ abstract LinearPredictionVariantsSynthesisFilter <: SynthesisFilter
 function synthesis_one_frame!(f::SynthesisFilter,
                               y::AbstractVector, # result will be stored
                               excitation::AbstractVector,
-                              bᵗ⁻¹::Vector,
-                              bᵗ::Vector)
+                              bᵗ⁻¹::AbstractVector,
+                              bᵗ::AbstractVector)
     @assert length(y) == length(excitation)
     slope = (bᵗ - bᵗ⁻¹) / length(excitation)
 
     interpolated_coef = copy(bᵗ⁻¹)
 
-    for i=1:length(excitation)
+    for i in 1:length(excitation)
         scaled_excitation = excitation[i] * exp(interpolated_coef[1])
         y[i] = filt!(f, scaled_excitation, interpolated_coef)
         for j=1:length(slope)
@@ -57,28 +57,27 @@ function synthesis_one_frame!(f::SynthesisFilter,
     y
 end
 
-function synthesis_one_frame!{T}(f::SynthesisFilter,
-                                 excitation::AbstractVector{T},
-                                 bᵗ⁻¹::Vector{T},
-                                 bᵗ::Vector{T})
-    y = Array(T, length(excitation))
-    synthesis_one_frame!(f, y, excitation, bᵗ⁻¹, bᵗ)
+function synthesis_one_frame!(f::SynthesisFilter,
+                              excitation::AbstractVector,
+                              bᵗ⁻¹::AbstractVector,
+                              bᵗ::AbstractVector)
+    synthesis_one_frame!(f, similar(excitation), excitation, bᵗ⁻¹, bᵗ)
 end
 
 # synthesis! generates a speech waveform given a excitation signal and
-# a sequence of spectral envelope paramter.
-function synthesis!{T}(f::SynthesisFilter,
-                       excitation::AbstractVector{T},
-                       b::Matrix{T},
-                       hopsize::Integer)
+# a sequence of spectral envelope parameter.
+function synthesis!(f::SynthesisFilter, # filter states are will be updated
+                    excitation::AbstractVector,
+                    b::AbstractMatrix,
+                    hopsize::Integer)
     synthesized = similar(excitation)
-    fill!(synthesized, zero(T))
+    fill!(synthesized, zero(eltype(synthesized)))
 
     bᵗ⁻¹ = b[:,1]
     bᵗ = similar(bᵗ⁻¹)
-    buf = Array(T, hopsize)
+    buf = Array(eltype(synthesized), hopsize)
 
-    for i=1:size(b, 2)
+    for i in 1:size(b, 2)
         if i > 1
             bᵗ⁻¹ = b[:,i-1]
         end
@@ -94,16 +93,18 @@ function synthesis!{T}(f::SynthesisFilter,
     synthesized
 end
 
+### Dispatch on specific filter types ###
+
 function synthesis!{T<:MelGeneralizedCepstrum}(f::MelGeneralizedCepstrumSynthesisFilter,
                     excitation::AbstractVector,
-                    mgc::SpectralParamState{T},
+                    state::SpectralParamState{T},
                     hopsize::Integer)
-    synthesis!(f, excitation, to_filtcoef(f, mgc), hopsize)
+    synthesis!(f, excitation, to_filtcoef(f, state), hopsize)
 end
 
 function synthesis!{T<:LinearPredictionCoefVariants}(f::LinearPredictionVariantsSynthesisFilter,
                     excitation::AbstractVector,
-                    mlpc::SpectralParamState{T},
+                    state::SpectralParamState{T},
                     hopsize::Integer)
-    synthesis!(f, excitation, to_filtcoef(f, mlpc), hopsize)
+    synthesis!(f, excitation, to_filtcoef(f, state), hopsize)
 end

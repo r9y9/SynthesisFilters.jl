@@ -13,23 +13,26 @@ export
     LinearPredictionVariantsSynthesisFilter, # AllPoleDF
 
     # Speech waveform synthesis filters
-    AllPoleDF,            # All Pole Digital filter
-    AllPoleLatticeDF,     # All Pole Lattice Digital filter
-    LSPDF,                # Line Spectral Pair  Digital Filter
-    LMADF,                # Log Magnitude Approximation Digital Filter
-    MLSADF,               # Mel-Log Spectrum Approximation Digital Filter
-    MGLSADF,              # Mel Generalized-Log Spectrum Approximation Digital Filter
+    AllPoleDF,            # All-pole digital filter for synthesis from LPC
+    AllPoleLatticeDF,     # All-pole lattice digital filter for synthesis from PARCOR
+    LSPDF,                # LSP digital filter for synthesis from LSP
+    LMADF,                # Log magnitude approximation digital filter for synthesis from cepstrum
+    MLSADF,               # Mel-log spectrum approximation digital filter for synthesis from mel-cepstrum
+    MGLSADF,              # Mel generalized-log spectrum approximation digital filter for synthesis from mel-generalized cepstrum
 
-    # high-level interface for waveform synthesis
-    synthesis!,           #
-    synthesis_one_frame!, #
+    # High-level interface for waveform synthesis
+    synthesis,
+    synthesis!,
+    synthesis_one_frame!,
 
-    to_filtcoef,          # spectral parameter to filter coefficients
     filt!,                # filtering one sample
+    to_filtcoef,          # spectral parameter to filter coefficients
 
-    allpass_alpha,        # all-pass constant (alpha)
-    glog_gamma,           # parameter of generalized log function
+    # Mel-generalized cepstrum synthesis filter properties
+    allpass_alpha,        # all-pass constant (α)
+    glog_gamma,           # parameter of generalized log function (γ)
 
+    # MGLSADF property
     nstage                # -1/γ; number of stages for MGLSADF
 
 for fname in [
@@ -40,7 +43,8 @@ for fname in [
               "lspdf",
               "lmadf",
               "mlsadf",
-              "mglsadf"
+              "mglsadf",
+              "helper"
     ]
     include(string(fname, ".jl"))
 end
