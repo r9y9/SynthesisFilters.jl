@@ -2,7 +2,7 @@ using MelGeneralizedCepstrums
 using SynthesisFilters
 using Base.Test
 
-# @unix_only include("sptk.jl")
+@unix_only include("sptk.jl")
 
 type TestSynthesisFilter <: SynthesisFilter
 end
