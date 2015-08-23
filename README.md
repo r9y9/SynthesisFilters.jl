@@ -7,7 +7,7 @@
 
 SynthesisFilters.jl provides waveform generation filters for speech synthesis, especially from mel-generalized cepstrum.
 
-Note that this package is built on top of [SPTK.jl](https://github.com/r9y9/SPTK.jl). A part of the core is re-writen in Julia language from [Speech Signal Processing Toolkit (SPTK)](http://sp-tk.sourceforge.net/).
+Note that this package is built on top of [SPTK.jl](https://github.com/r9y9/SPTK.jl). The package is designed to provide a Julia-like interface with a focus on speech waveform synthesis. A part of the core is re-writen in Julia language from [Speech Signal Processing Toolkit (SPTK)](http://sp-tk.sourceforge.net/).
 
 ## Features
 
