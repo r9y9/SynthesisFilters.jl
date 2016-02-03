@@ -6,19 +6,10 @@ using Base.Test
 
 type TestSynthesisFilter <: SynthesisFilter
 end
-type TestMGCSF <: MelGeneralizedCepstrumSynthesisFilter
-end
-type TestMLPSF <: LinearPredictionVariantsSynthesisFilter
-end
 
 let
-    @test_throws Exception to_filtercoef(TestSynthesisFilter(), rand(10))
-    @test_throws Exception filt!(TestSynthesisFilter(), 1.0, rand(10))
-    f = TestMGCSF()
-    @test_throws Exception SynthesisFilters.allpass_alpha(f)
-    @test_throws Exception SynthesisFilters.glog_gamma(f)
-    f = TestMLPSF()
-    @test_throws Exception SynthesisFilters.allpass_alpha(f)
+    @test_throws ErrorException to_filtcoef(TestSynthesisFilter(), rand(10))
+    @test_throws ErrorException filt!(TestSynthesisFilter(), 1.0, rand(10))
 end
 
 function test_synthesis_one_frame(f::SynthesisFilter, order)
@@ -81,7 +72,7 @@ function test_poledf_exception()
                 MelGeneralizedCepstrum(order, 0.41, -0.1)
                 ]
         l = estimate(def, x)
-        @test_throws Exception synthesis!(f, excite, l, hopsize)
+        @test_throws ErrorException synthesis!(f, excite, l, hopsize)
     end
 end
 
@@ -140,14 +131,14 @@ function test_lmadf_exception()
                 AllPoleCepstrum(order)
                 ]
         mgc = estimate(def, x)
-        @test_throws Exception synthesis!(f, excite, mgc, hopsize)
+        @test_throws ErrorException synthesis!(f, excite, mgc, hopsize)
     end
 
     ## pade approximation
-    @test_throws Exception LMADF(order, pade=3)
+    @test_throws ErrorException LMADF(order, pade=3)
     try LMADF(order; pade=4); catch @test false; end
     try LMADF(order; pade=5); catch @test false; end
-    @test_throws Exception LMADF(order, pade=6)
+    @test_throws ErrorException LMADF(order, pade=6)
 end
 
 function test_mlsadf_synthesis(order::Int, α::Float64, pade::Int, hopsize::Int)
@@ -185,14 +176,14 @@ function test_mlsadf_exception()
                 AllPoleCepstrum(order)
                 ]
         mgc = estimate(def, x)
-        @test_throws Exception synthesis!(f, excite, mgc, hopsize)
+        @test_throws ErrorException synthesis!(f, excite, mgc, hopsize)
     end
 
     ## pade approximation
-    @test_throws Exception MLSADF(order, 0.41; pade=3)
+    @test_throws ErrorException MLSADF(order, 0.41; pade=3)
     try MLSADF(order, 0.41; pade=4); catch @test false; end
     try MLSADF(order, 0.41; pade=5); catch @test false; end
-    @test_throws Exception MLSADF(order, 0.41; pade=6)
+    @test_throws ErrorException MLSADF(order, 0.41; pade=6)
 end
 
 function test_mglsadf_synthesis(order::Int, α::Float64, ns::Int, hopsize::Int)
@@ -217,7 +208,7 @@ function test_mglsadf_exceptions()
     α = 0.41
     mgc = estimate(MelGeneralizedCepstrum(order, α, -1/ns), x)
     # should raise exception for non-integer ns
-    @test_throws Exception synthesis(excite, mgc, hopsize)
+    @test_throws ErrorException synthesis(excite, mgc, hopsize)
 end
 
 function test_synthesis()
