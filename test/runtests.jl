@@ -1,5 +1,6 @@
 using MelGeneralizedCepstrums
 using SynthesisFilters
+using Compat
 using Base.Test
 
 @static is_linux() ? include("sptk.jl") : nothing
