@@ -20,7 +20,7 @@ function test_synthesis_one_frame(f::SynthesisFilter, order)
     current_b = rand(order+1)
 
     r = synthesis_one_frame!(f, excite, previous_b, current_b)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_poledf_synthesis(order::Int, hopsize::Int)
@@ -32,7 +32,7 @@ function test_poledf_synthesis(order::Int, hopsize::Int)
 
     f = AllPoleDF(order)
     r = synthesis!(f, excite, l, hopsize)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_synthesis(def::SpectralParam, hopsize)
@@ -52,7 +52,7 @@ function test_synthesis(def::SpectralParam, hopsize)
     end
 
     r = synthesis(excite, state, hopsize)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_poledf_exception()
@@ -86,7 +86,7 @@ function test_ltcdf_synthesis(order::Int, hopsize::Int)
 
     f = AllPoleLatticeDF(order)
     r = synthesis!(f, excite, par, hopsize)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_lspdf_synthesis(order::Int, hopsize::Int)
@@ -98,7 +98,7 @@ function test_lspdf_synthesis(order::Int, hopsize::Int)
 
     f = LSPDF(order)
     r = synthesis!(f, excite, lsp, hopsize)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_lmadf_synthesis(order::Int, pade::Int, hopsize::Int)
@@ -110,7 +110,7 @@ function test_lmadf_synthesis(order::Int, pade::Int, hopsize::Int)
 
     f = LMADF(order; pade=pade)
     r = synthesis!(f, excite, mgc, hopsize)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_lmadf_exception()
@@ -151,7 +151,7 @@ function test_mlsadf_synthesis(order::Int, α::Float64, pade::Int, hopsize::Int)
 
     f = MLSADF(order, α; pade=pade)
     r = synthesis!(f, excite, mgc, hopsize)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_mlsadf_exception()
@@ -195,7 +195,7 @@ function test_mglsadf_synthesis(order::Int, α::Float64, ns::Int, hopsize::Int)
 
     f = MGLSADF(order, α, ns)
     r = synthesis!(f, excite, mgc, hopsize)
-    @test any(!isnan(r))
+    @test @compat all(isfinite.(r))
 end
 
 function test_mglsadf_exceptions()
