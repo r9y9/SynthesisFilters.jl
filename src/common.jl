@@ -75,7 +75,7 @@ function synthesis!(f::SynthesisFilter, # filter states are will be updated
 
     bᵗ⁻¹ = b[:,1]
     bᵗ = similar(bᵗ⁻¹)
-    buf = Array(eltype(synthesized), hopsize)
+    buf = Vector{eltype(synthesized)}(hopsize)
 
     for i in 1:size(b, 2)
         if i > 1

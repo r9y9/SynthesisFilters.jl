@@ -41,7 +41,7 @@ type MGLSADF <: MelGeneralizedCepstrumSynthesisFilter
 
     function MGLSADF(order::Int, α::Float64, nstage::Int)
         @assert nstage > 0
-        filters = Array(MGLSABaseFilter, nstage)
+        filters = Vector{MGLSABaseFilter}(nstage)
         for i=1:length(filters)
             filters[i] = MGLSABaseFilter(order, α)
         end

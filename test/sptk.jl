@@ -16,7 +16,7 @@ function test_poledf()
         y = SPTK.poledf(x[i], c, delay)
         ŷ = filt!(f, x[i], c)
         @test !isnan(ŷ)
-        @test_approx_eq y ŷ
+        @test y ≈ ŷ
     end
 end
 
@@ -35,7 +35,7 @@ function test_lmadf(pade::Int)
         y = SPTK.lmadf(x[i], c, pade, delay)
         ŷ = filt!(f, x[i], c)
         @test !isnan(ŷ)
-        @test_approx_eq y ŷ
+        @test y ≈ ŷ
     end
 end
 
@@ -56,7 +56,7 @@ function test_mlsadf(α::Float64, pade::Int)
         y = SPTK.mlsadf(x[i], mc, α, pade, delay)
         ŷ = filt!(f, x[i], mc)
         @test !isnan(ŷ)
-        @test_approx_eq y ŷ
+        @test y ≈ ŷ
     end
 end
 
@@ -78,7 +78,7 @@ function test_mglsadf(α::Float64=0.41, ns::Int=10)
         y = SPTK.mglsadf(x[i], mc, α, ns, delay)
         ŷ = filt!(f, x[i], mc)
         @test !isnan(ŷ)
-        @test_approx_eq y ŷ
+        @test y ≈ ŷ
     end
 end
 

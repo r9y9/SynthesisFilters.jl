@@ -38,7 +38,7 @@ type LMACascadeFilter <: Filter
     delay::Vector{Float64}
 
     function LMACascadeFilter(order::Int, pade::Int)
-        padecoef = Array(Float64, pade+1)
+        padecoef = Vector{Float64}(pade+1)
 
         if pade == 4
             padecoef = padecoef4th
@@ -48,7 +48,7 @@ type LMACascadeFilter <: Filter
             error("LMADF: Order of pade approximation 4 or 5 is only supported.")
         end
 
-        filters = Array(LMABaseFilter, pade+1)
+        filters = Vector{LMABaseFilter}(pade+1)
         for i=1:length(filters)
             filters[i] = LMABaseFilter(order)
         end
@@ -85,7 +85,7 @@ type LMADF <: MelGeneralizedCepstrumSynthesisFilter
     filters::Vector{LMACascadeFilter}
 
     function LMADF(order::Int; pade::Int=5)
-        filters = Array(LMACascadeFilter, 2)
+        filters = Vector{LMACascadeFilter}(2)
         filters[1] = LMACascadeFilter(order, pade)
         filters[2] = LMACascadeFilter(order, pade)
         new(filters)
