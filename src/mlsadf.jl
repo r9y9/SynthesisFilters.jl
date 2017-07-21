@@ -1,7 +1,7 @@
 # Mel-Log Spectrum Approximation filter (MLSADF)
 
 # MLSABaseFilter represents a base filter of the MLSADF.
-type MLSABaseFilter <: Filter
+mutable struct MLSABaseFilter <: Filter
     order::Int
     α::Float64
     delay::Vector{Float64}
@@ -42,7 +42,7 @@ end
 
 # MLSACascadeFilter represents a cascade filter which contains MLSA base
 # filters.
-type MLSACascadeFilter <: Filter
+mutable struct MLSACascadeFilter <: Filter
     filters::Vector{MLSABaseFilter}
     padecoef::Vector{Float64}
     delay::Vector{Float64}
@@ -91,7 +91,7 @@ function filt!(f::MLSACascadeFilter, x::Float64, coef::Vector{Float64})
     result
 end
 
-type MLSADF <: MelGeneralizedCepstrumSynthesisFilter
+mutable struct MLSADF <: MelGeneralizedCepstrumSynthesisFilter
     filters::Vector{MLSACascadeFilter}
 
     function MLSADF(order::Int, α::Float64; pade::Int=5)

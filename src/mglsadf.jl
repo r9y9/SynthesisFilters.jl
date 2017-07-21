@@ -1,7 +1,7 @@
 # Mel Generalized-Log Spectrum Approximation Digital Filter
 
 # MGLSABaseFilter represents a base filter of MGLSAFilter.
-type MGLSABaseFilter <: Filter
+mutable struct MGLSABaseFilter <: Filter
     order::Int   # order of mel generalized cepstrum
     α::Float64  # all-pass constant
     delay::Vector{Float64}
@@ -36,7 +36,7 @@ end
 
 # MGLSAFilter represents a Mel Generalized Log Spectrum Approximation Digital
 # Filter.
-type MGLSADF <: MelGeneralizedCepstrumSynthesisFilter
+mutable struct MGLSADF <: MelGeneralizedCepstrumSynthesisFilter
     filters::Vector{MGLSABaseFilter}
 
     function MGLSADF(order::Int, α::Float64, nstage::Int)
