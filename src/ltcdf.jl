@@ -1,5 +1,5 @@
 # All Pole lattice digital filter
-type AllPoleLatticeDF <: LinearPredictionVariantsSynthesisFilter
+mutable struct AllPoleLatticeDF <: LinearPredictionVariantsSynthesisFilter
     delay::Vector{Float64}
 
     function AllPoleLatticeDF(order)
