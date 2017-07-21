@@ -1,7 +1,7 @@
 import MelGeneralizedCepstrums: allpass_alpha, glog_gamma
 
-@compat abstract type Filter end
-@compat abstract type SynthesisFilter <: Filter end
+abstract type Filter end
+abstract type SynthesisFilter <: Filter end
 
 ### Generic interfaces ###
 
@@ -19,7 +19,7 @@ end
 
 ### Interfaces for mel-generalized ceptrum synthesis filters ###
 
-@compat abstract type MelGeneralizedCepstrumSynthesisFilter <: SynthesisFilter end
+abstract type MelGeneralizedCepstrumSynthesisFilter <: SynthesisFilter end
 
 function allpass_alpha(f::MelGeneralizedCepstrumSynthesisFilter)
     error("should provide get access to allpass constant")
@@ -30,7 +30,7 @@ function glog_gamma(f::MelGeneralizedCepstrumSynthesisFilter)
 end
 
 # LPC, PARCOR and LSP
-@compat abstract type LinearPredictionVariantsSynthesisFilter <: SynthesisFilter end
+abstract type LinearPredictionVariantsSynthesisFilter <: SynthesisFilter end
 
 ### Waveform synthesis implementation ###
 

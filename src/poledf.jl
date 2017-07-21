@@ -2,7 +2,7 @@
 
 poledf_delay(order::Int) = zeros(order)
 
-type AllPoleDF <: LinearPredictionVariantsSynthesisFilter
+mutable struct AllPoleDF <: LinearPredictionVariantsSynthesisFilter
     delay::Vector{Float64}
 
     function AllPoleDF(order::Int)

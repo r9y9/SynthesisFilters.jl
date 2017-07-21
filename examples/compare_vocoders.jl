@@ -35,11 +35,11 @@ noverlap = framelen - hopsize
 
 # Note that mgcep analysis basically assumes power-normalized window
 # ŵ(n) = w(n)/|Σₙ w(n)²|¹/²
-win = DSP.blackman(framelen) ./ sqrt(sumabs2(DSP.blackman(framelen)))
+win = DSP.blackman(framelen) ./ sqrt(sum(abs2, (DSP.blackman(framelen))))
 
 # create windowed signal matrix that each column represents a windowed time slice
 as = arraysplit(x, framelen, noverlap)
-xw = Array(Float64, framelen, length(as))
+xw = Array{Float64,2}(framelen, length(as))
 for t=1:length(as)
     xw[:,t] = as[t]
 end

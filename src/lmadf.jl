@@ -1,6 +1,6 @@
 # Log Magnitude Approximation (LMA) digital filter
 
-type LMABaseFilter <: Filter
+mutable struct LMABaseFilter <: Filter
     order::Int
     delay::Vector{Float64}
 
@@ -32,7 +32,7 @@ end
 
 # LMACascadeFilter represents a cascade filter which contains LMA base
 # filters.
-type LMACascadeFilter <: Filter
+mutable struct LMACascadeFilter <: Filter
     filters::Vector{LMABaseFilter}
     padecoef::Vector{Float64}
     delay::Vector{Float64}
@@ -81,7 +81,7 @@ function filt!(f::LMACascadeFilter, x::Float64, coef::Vector{Float64},
     result
 end
 
-type LMADF <: MelGeneralizedCepstrumSynthesisFilter
+mutable struct LMADF <: MelGeneralizedCepstrumSynthesisFilter
     filters::Vector{LMACascadeFilter}
 
     function LMADF(order::Int; pade::Int=5)

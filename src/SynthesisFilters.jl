@@ -2,8 +2,6 @@ __precompile__()
 
 module SynthesisFilters
 
-using Compat
-import Compat: view
 using MelGeneralizedCepstrums
 
 import SPTK

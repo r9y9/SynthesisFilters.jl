@@ -1,5 +1,5 @@
 # LSP speech synthesis digital filter
-type LSPDF <: LinearPredictionVariantsSynthesisFilter
+mutable struct LSPDF <: LinearPredictionVariantsSynthesisFilter
     delay::Vector{Float64}
 
     function LSPDF(order)
